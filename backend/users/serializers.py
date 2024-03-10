@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import api.serializers
 from django.contrib.auth.hashers import check_password
 from django.contrib.auth.password_validation import validate_password
@@ -10,13 +11,33 @@ from rest_framework.exceptions import ValidationError
 from recipes.models import Recipe
 
 from .models import Follow, User
+=======
+from djoser.serializers import UserSerializer, UserCreateSerializer
+from rest_framework import serializers
+from .models import User, Follow
+
+from django.core import exceptions
+from recipes.models import Recipe
+from django.contrib.auth.hashers import check_password
+from django.contrib.auth.password_validation import validate_password
+
+from rest_framework.exceptions import ValidationError
+from rest_framework import status
+from django.db.models import Q
+from django.utils.translation import gettext_lazy as _
+import api.serializers
+>>>>>>> 152dd30ebbb1a1a6a72d4166ef0c99464dc51bc3
 
 
 class UserSerializer(UserSerializer):
     """Профиль пользователя"""
 
     is_subscribed = serializers.SerializerMethodField()
+<<<<<<< HEAD
 
+=======
+    
+>>>>>>> 152dd30ebbb1a1a6a72d4166ef0c99464dc51bc3
     class Meta:
         model = User
         fields = ('email',
@@ -27,6 +48,7 @@ class UserSerializer(UserSerializer):
                   'is_subscribed',)
 
     def get_is_subscribed(self, obj):
+<<<<<<< HEAD
         if (
             self.context.get('request')
             and not self.context['request'].user.is_anonymous
@@ -35,17 +57,33 @@ class UserSerializer(UserSerializer):
                 follower=self.context['request'].user,
                 following=obj
             ).exists()
+=======
+        if (self.context.get('request')
+            and not self.context['request'].user.is_anonymous):
+            return Follow.objects.filter(
+                follower=self.context['request'].user,
+                following=obj
+                ).exists()
+>>>>>>> 152dd30ebbb1a1a6a72d4166ef0c99464dc51bc3
         return False
 
     def create(self, validated_data):
         return User.objects.create_user(**validated_data)
 
 
+<<<<<<< HEAD
 class UserCreateSerializer(BaseUserRegistration):
     """Регистрация пользователя"""
 
     class Meta(BaseUserRegistration.Meta):
 
+=======
+class UserCreateSerializer(UserCreateSerializer):
+    """Регистрация пользователя"""
+
+    class Meta:
+        model = User
+>>>>>>> 152dd30ebbb1a1a6a72d4166ef0c99464dc51bc3
         fields = ('id',
                   'email',
                   'username',
@@ -59,7 +97,11 @@ class UserCreateSerializer(BaseUserRegistration):
         if name in invalid_name:
             raise ValidationError(
                 f'Использовать "{name}" нельзя. Выберите другое имя!'
+<<<<<<< HEAD
             )
+=======
+                )
+>>>>>>> 152dd30ebbb1a1a6a72d4166ef0c99464dc51bc3
         return data
 
 
@@ -67,6 +109,7 @@ class PasswordChangeSerializer(serializers.ModelSerializer):
     """Изменение пароля"""
 
     new_password = serializers.CharField(required=True)
+<<<<<<< HEAD
     current_password = serializers.CharField(required=True)
 
     class Meta:
@@ -76,14 +119,25 @@ class PasswordChangeSerializer(serializers.ModelSerializer):
             'first_name': {'required': True, 'allow_blank': False},
             'last_name': {'required': True, 'allow_blank': False},
         }
+=======
+    current_password = serializers.CharField(required=False)
+    
+    class Meta:
+        model = User
+        fields = ('new_password', 'current_password',)
+>>>>>>> 152dd30ebbb1a1a6a72d4166ef0c99464dc51bc3
 
     def update(self, instance, validated_data):
 
         request = self.context['request']
         user_password = request.user.password
+<<<<<<< HEAD
         if not check_password(
             validated_data['current_password'], user_password
         ):
+=======
+        if not check_password(validated_data['current_password'], user_password):
+>>>>>>> 152dd30ebbb1a1a6a72d4166ef0c99464dc51bc3
             raise ValidationError(
                 {'current_password': 'Неправильный текущий пароль!'}
             )
@@ -102,13 +156,21 @@ class PasswordChangeSerializer(serializers.ModelSerializer):
         except exceptions.ValidationError as err:
             raise ValidationError(
                 {'new_password': list(err.messages)}
+<<<<<<< HEAD
             )
+=======
+                )
+>>>>>>> 152dd30ebbb1a1a6a72d4166ef0c99464dc51bc3
         return super().validate(obj)
 
 
 class FollowSerializer(serializers.ModelSerializer):
     """Подписка пользователя, проверка входных данных"""
+<<<<<<< HEAD
 
+=======
+    
+>>>>>>> 152dd30ebbb1a1a6a72d4166ef0c99464dc51bc3
     email = serializers.ReadOnlyField(source='following.email')
     id = serializers.ReadOnlyField(source='following.id')
     username = serializers.ReadOnlyField(source='following.username')
@@ -128,7 +190,11 @@ class FollowSerializer(serializers.ModelSerializer):
                   'is_subscribed',
                   'recipes',
                   'recipes_count',)
+<<<<<<< HEAD
 
+=======
+    
+>>>>>>> 152dd30ebbb1a1a6a72d4166ef0c99464dc51bc3
     def get_recipes(self, obj):
         request = self.context.get('request')
         recipes_limit = request.query_params.get('recipes_limit')
@@ -136,7 +202,11 @@ class FollowSerializer(serializers.ModelSerializer):
         if recipes_limit:
             recipes = recipes[:int(recipes_limit)]
         return api.serializers.RecipeSerializer(recipes, many=True).data
+<<<<<<< HEAD
 
+=======
+    
+>>>>>>> 152dd30ebbb1a1a6a72d4166ef0c99464dc51bc3
     def get_is_subscribed(self, obj):
         follower = self.context.get('request').user
         if not follower.is_anonymous:
@@ -155,9 +225,14 @@ class FollowSerializer(serializers.ModelSerializer):
                 following=following,
                 follower=follower).exists():
             raise ValidationError(
+<<<<<<< HEAD
                 {'errors': 'Вы уже подписаны на этого пользователя!'},
                 code=status.HTTP_400_BAD_REQUEST
             )
+=======
+               {'errors': 'Вы уже подписаны на этого пользователя!'},
+                code=status.HTTP_400_BAD_REQUEST)
+>>>>>>> 152dd30ebbb1a1a6a72d4166ef0c99464dc51bc3
         if follower == following:
             raise ValidationError(
                 {'errors': 'Вы не можете подписаться на себя!'},

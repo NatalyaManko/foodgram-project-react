@@ -1,5 +1,6 @@
 from django.contrib import admin
 
+<<<<<<< HEAD
 from .models import Follow, User
 
 
@@ -13,3 +14,9 @@ class UserAdmin(admin.ModelAdmin):
 
 admin.site.register(User, UserAdmin)
 admin.site.register(Follow)
+=======
+from .models import User, Follow
+
+admin.site.register(User)
+admin.site.register(Follow)
+>>>>>>> 152dd30ebbb1a1a6a72d4166ef0c99464dc51bc3

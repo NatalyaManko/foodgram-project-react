@@ -2,8 +2,13 @@
 
 import colorfield.fields
 import django.core.validators
+<<<<<<< HEAD
 import django.db.models.deletion
 from django.db import migrations, models
+=======
+from django.db import migrations, models
+import django.db.models.deletion
+>>>>>>> 152dd30ebbb1a1a6a72d4166ef0c99464dc51bc3
 
 
 class Migration(migrations.Migration):

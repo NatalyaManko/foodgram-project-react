@@ -11,6 +11,7 @@ django-templated-mail==1.1.1
 djangorestframework==3.14.0
 djangorestframework-simplejwt==5.3.1
 djoser==2.2.2
+<<<<<<< HEAD
 flake8==7.0.0
 flake8-isort==6.1.1
 idna==3.6
@@ -24,6 +25,13 @@ pycparser==2.21
 pyflakes==3.2.0
 PyJWT==2.8.0
 python-dotenv==1.0.1
+=======
+idna==3.6
+oauthlib==3.2.2
+pillow==10.2.0
+pycparser==2.21
+PyJWT==2.8.0
+>>>>>>> 152dd30ebbb1a1a6a72d4166ef0c99464dc51bc3
 python3-openid==3.2.0
 pytz==2024.1
 requests==2.31.0
