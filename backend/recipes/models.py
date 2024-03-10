@@ -1,9 +1,15 @@
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 from colorfield.fields import ColorField
 from django.core.validators import MinValueValidator
 from django.db import models
 
+=======
+from django.db import models
+from django.core.validators import MinValueValidator
+from colorfield.fields import ColorField
+>>>>>>> 152dd30ebbb1a1a6a72d4166ef0c99464dc51bc3
 =======
 from django.db import models
 from django.core.validators import MinValueValidator
@@ -19,8 +25,13 @@ class Ingredient(models.Model):
                             max_length=128)
     measurement_unit = models.CharField('Единица измерения',
 <<<<<<< HEAD
+<<<<<<< HEAD
                                         max_length=50)
 
+=======
+                               max_length=50)   
+    
+>>>>>>> 152dd30ebbb1a1a6a72d4166ef0c99464dc51bc3
 =======
                                max_length=50)   
     
@@ -32,7 +43,11 @@ class Ingredient(models.Model):
 
     def __str__(self):
 <<<<<<< HEAD
+<<<<<<< HEAD
         return f'{self.name}, {self.measurement_unit}'
+=======
+        return f'{self.name}, {self.measurement_unit}' 
+>>>>>>> 152dd30ebbb1a1a6a72d4166ef0c99464dc51bc3
 =======
         return f'{self.name}, {self.measurement_unit}' 
 >>>>>>> 152dd30ebbb1a1a6a72d4166ef0c99464dc51bc3
@@ -47,15 +62,21 @@ class Tag(models.Model):
     slug = models.SlugField('Slug тега',
                             unique=True)
 <<<<<<< HEAD
+<<<<<<< HEAD
     color = ColorField('Цветовой код',
                        unique=True,
                        max_length=7)
 
 =======
+=======
+>>>>>>> 152dd30ebbb1a1a6a72d4166ef0c99464dc51bc3
     color = ColorField('Цветовой код', 
                        unique=True,
                        max_length=7)
     
+<<<<<<< HEAD
+>>>>>>> 152dd30ebbb1a1a6a72d4166ef0c99464dc51bc3
+=======
 >>>>>>> 152dd30ebbb1a1a6a72d4166ef0c99464dc51bc3
     class Meta:
         constraints = [
@@ -71,7 +92,11 @@ class Tag(models.Model):
     def __str__(self):
         return self.name
 <<<<<<< HEAD
+<<<<<<< HEAD
 
+=======
+    
+>>>>>>> 152dd30ebbb1a1a6a72d4166ef0c99464dc51bc3
 =======
     
 >>>>>>> 152dd30ebbb1a1a6a72d4166ef0c99464dc51bc3
@@ -81,7 +106,11 @@ class Recipe(models.Model):
 
     name = models.CharField('Название',
 <<<<<<< HEAD
+<<<<<<< HEAD
                             max_length=200)
+=======
+                             max_length=200)
+>>>>>>> 152dd30ebbb1a1a6a72d4166ef0c99464dc51bc3
 =======
                              max_length=200)
 >>>>>>> 152dd30ebbb1a1a6a72d4166ef0c99464dc51bc3
@@ -93,6 +122,7 @@ class Recipe(models.Model):
                               upload_to='recipes/images/')
     text = models.TextField('Описание рецепта')
     ingredients = models.ManyToManyField(Ingredient,
+<<<<<<< HEAD
 <<<<<<< HEAD
                                          through='RecipeIngredient',
                                          verbose_name='Ингредиент')
@@ -109,6 +139,8 @@ class Recipe(models.Model):
                                   verbose_name='Тег')
 
 =======
+=======
+>>>>>>> 152dd30ebbb1a1a6a72d4166ef0c99464dc51bc3
                                    through='RecipeIngredient',
                                    related_name='recipes_ingredients',
                                    verbose_name='Ингредиент')
@@ -124,6 +156,9 @@ class Recipe(models.Model):
                             related_name='recipes_tags',
                             verbose_name='Тег')
   
+<<<<<<< HEAD
+>>>>>>> 152dd30ebbb1a1a6a72d4166ef0c99464dc51bc3
+=======
 >>>>>>> 152dd30ebbb1a1a6a72d4166ef0c99464dc51bc3
     class Meta:
         ordering = ('-id', 'name', 'author')
@@ -134,7 +169,11 @@ class Recipe(models.Model):
         return self.name
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 
+=======
+        
+>>>>>>> 152dd30ebbb1a1a6a72d4166ef0c99464dc51bc3
 =======
         
 >>>>>>> 152dd30ebbb1a1a6a72d4166ef0c99464dc51bc3
@@ -142,6 +181,7 @@ class RecipeIngredient(models.Model):
     """Модель Ингредиентов Рецептов"""
 
     ingredient = models.ForeignKey(Ingredient,
+<<<<<<< HEAD
 <<<<<<< HEAD
                                    on_delete=models.CASCADE,
                                    verbose_name='Ингредиент',
@@ -159,6 +199,8 @@ class RecipeIngredient(models.Model):
         ]
     )
 =======
+=======
+>>>>>>> 152dd30ebbb1a1a6a72d4166ef0c99464dc51bc3
                                     on_delete=models.CASCADE,
                                     verbose_name='Ингредиент',
                                     related_name='ingredients_amount')
@@ -172,6 +214,9 @@ class RecipeIngredient(models.Model):
             )
                     ]
         )    
+<<<<<<< HEAD
+>>>>>>> 152dd30ebbb1a1a6a72d4166ef0c99464dc51bc3
+=======
 >>>>>>> 152dd30ebbb1a1a6a72d4166ef0c99464dc51bc3
 
     class Meta:
@@ -194,6 +239,7 @@ class RecipeTag(models.Model):
 
     tag = models.ForeignKey(Tag,
 <<<<<<< HEAD
+<<<<<<< HEAD
                             on_delete=models.CASCADE,
                             verbose_name='Тег',
                             related_name='tags')
@@ -202,12 +248,17 @@ class RecipeTag(models.Model):
                                verbose_name='Рецепт',
                                related_name='recipes_tags')
 =======
+=======
+>>>>>>> 152dd30ebbb1a1a6a72d4166ef0c99464dc51bc3
                              on_delete=models.CASCADE,
                              verbose_name='Тег',
                              related_name='tags')
     recipe = models.ForeignKey(Recipe,
                                on_delete=models.CASCADE,
                                verbose_name='Рецепт')
+<<<<<<< HEAD
+>>>>>>> 152dd30ebbb1a1a6a72d4166ef0c99464dc51bc3
+=======
 >>>>>>> 152dd30ebbb1a1a6a72d4166ef0c99464dc51bc3
 
     class Meta:
@@ -225,7 +276,10 @@ class RecipeTag(models.Model):
         return f'{self.tag}: {self.recipe}'
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 
+=======
+>>>>>>> 152dd30ebbb1a1a6a72d4166ef0c99464dc51bc3
 =======
 >>>>>>> 152dd30ebbb1a1a6a72d4166ef0c99464dc51bc3
 class ShoppingCart(models.Model):

@@ -15,7 +15,11 @@ Including another URLconf
 """
 from django.contrib import admin
 <<<<<<< HEAD
+<<<<<<< HEAD
 from django.urls import include, path
+=======
+from django.urls import path, include
+>>>>>>> 152dd30ebbb1a1a6a72d4166ef0c99464dc51bc3
 =======
 from django.urls import path, include
 >>>>>>> 152dd30ebbb1a1a6a72d4166ef0c99464dc51bc3

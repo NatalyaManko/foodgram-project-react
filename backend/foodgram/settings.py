@@ -1,4 +1,5 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
 import os
 from pathlib import Path
 
@@ -20,6 +21,8 @@ CORS_ALLOWED_ORIGINS = [
 CORS_URLS_REGEX = r'^/api/.*$'
 
 =======
+=======
+>>>>>>> 152dd30ebbb1a1a6a72d4166ef0c99464dc51bc3
 """
 Django settings for foodgram project.
 
@@ -51,6 +54,9 @@ ALLOWED_HOSTS = []
 
 
 # Application definition
+<<<<<<< HEAD
+>>>>>>> 152dd30ebbb1a1a6a72d4166ef0c99464dc51bc3
+=======
 >>>>>>> 152dd30ebbb1a1a6a72d4166ef0c99464dc51bc3
 
 INSTALLED_APPS = [
@@ -102,6 +108,12 @@ WSGI_APPLICATION = 'foodgram.wsgi.application'
 
 
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+# Database
+# https://docs.djangoproject.com/en/3.2/ref/settings/#databases
+
+>>>>>>> 152dd30ebbb1a1a6a72d4166ef0c99464dc51bc3
 =======
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
@@ -112,6 +124,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': BASE_DIR / 'db.sqlite3',
 <<<<<<< HEAD
+<<<<<<< HEAD
       #  'ENGINE': 'django.db.backends.postgresql',
       #  'NAME': os.getenv('POSTGRES_DB', 'foodgram'),
       #  'USER': os.getenv('POSTGRES_USER', 'jokedump'),
@@ -120,11 +133,19 @@ DATABASES = {
       #  'PORT': os.getenv('DB_PORT', 5432)
 =======
 >>>>>>> 152dd30ebbb1a1a6a72d4166ef0c99464dc51bc3
+=======
+>>>>>>> 152dd30ebbb1a1a6a72d4166ef0c99464dc51bc3
     }
 }
 
 
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+# Password validation
+# https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators
+
+>>>>>>> 152dd30ebbb1a1a6a72d4166ef0c99464dc51bc3
 =======
 # Password validation
 # https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators
@@ -148,7 +169,11 @@ AUTH_PASSWORD_VALIDATORS = [
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [
 <<<<<<< HEAD
+<<<<<<< HEAD
         'rest_framework.permissions.IsAuthenticatedOrReadOnly',
+=======
+        'rest_framework.permissions.IsAuthenticated',
+>>>>>>> 152dd30ebbb1a1a6a72d4166ef0c99464dc51bc3
 =======
         'rest_framework.permissions.IsAuthenticated',
 >>>>>>> 152dd30ebbb1a1a6a72d4166ef0c99464dc51bc3
@@ -166,12 +191,15 @@ REST_FRAMEWORK = {
     'DEFAULT_THROTTLE_CLASSES': [
         'rest_framework.throttling.UserRateThrottle',
 <<<<<<< HEAD
+<<<<<<< HEAD
         'rest_framework.throttling.ScopedRateThrottle',
     ],
     'DEFAULT_THROTTLE_RATES': {
         'user': '10000/day',
         'anon': '1000/day',
 =======
+=======
+>>>>>>> 152dd30ebbb1a1a6a72d4166ef0c99464dc51bc3
         # Не будем подключать класс AnonRateThrottle глобально.
         # Подключим его только в тех view-классах или вьюсетах,
         # где надо установить лимиты для анонимов
@@ -183,19 +211,28 @@ REST_FRAMEWORK = {
         'anon': '1000/day',  #  Лимит для AnonRateThrottle
         # Имена (ключи) для scope придумывает разработчик, 
         # в меру собственной фантазии
+<<<<<<< HEAD
+>>>>>>> 152dd30ebbb1a1a6a72d4166ef0c99464dc51bc3
+=======
 >>>>>>> 152dd30ebbb1a1a6a72d4166ef0c99464dc51bc3
         'travel_speed': '1/minute',
     }
 }
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
+=======
+>>>>>>> 152dd30ebbb1a1a6a72d4166ef0c99464dc51bc3
 #SIMPLE_JWT = {
  #   'ACCESS_TOKEN_LIFETIME': timedelta(days=30),
  #   'AUTH_HEADER_TYPES': ('Bearer',),
 #}
 # Internationalization
 # https://docs.djangoproject.com/en/3.2/topics/i18n/
+<<<<<<< HEAD
+>>>>>>> 152dd30ebbb1a1a6a72d4166ef0c99464dc51bc3
+=======
 >>>>>>> 152dd30ebbb1a1a6a72d4166ef0c99464dc51bc3
 
 LANGUAGE_CODE = 'ru-Ru'
@@ -210,6 +247,12 @@ USE_TZ = True
 
 
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+# Static files (CSS, JavaScript, Images)
+# https://docs.djangoproject.com/en/3.2/howto/static-files/
+
+>>>>>>> 152dd30ebbb1a1a6a72d4166ef0c99464dc51bc3
 =======
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
@@ -221,7 +264,12 @@ STATIC_ROOT = BASE_DIR / 'collected_static'
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 <<<<<<< HEAD
+<<<<<<< HEAD
 
+=======
+# Default primary key field type
+# https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
+>>>>>>> 152dd30ebbb1a1a6a72d4166ef0c99464dc51bc3
 =======
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
@@ -231,6 +279,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUTH_USER_MODEL = 'users.User'
 
+<<<<<<< HEAD
 <<<<<<< HEAD
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
@@ -249,6 +298,8 @@ DJOSER = {
     },
 }
 =======
+=======
+>>>>>>> 152dd30ebbb1a1a6a72d4166ef0c99464dc51bc3
 #AUTHENTICATION_BACKEND = 'users.backends.EmailBackend'
 
 
@@ -258,4 +309,7 @@ DJOSER ={
     'LOGIN_FIELD': 'email',
 }
  #   'PASSWORD_RESET_CONFIRM_URL': 'set_password/{uid}/{token}',
+<<<<<<< HEAD
+>>>>>>> 152dd30ebbb1a1a6a72d4166ef0c99464dc51bc3
+=======
 >>>>>>> 152dd30ebbb1a1a6a72d4166ef0c99464dc51bc3

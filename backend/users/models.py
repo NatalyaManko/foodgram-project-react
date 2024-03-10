@@ -7,9 +7,14 @@ from users.validators import validation_username
 class User(AbstractUser):
     """Модель Пользователя"""
 <<<<<<< HEAD
+<<<<<<< HEAD
 
     username = models.CharField(
         'Логин',
+=======
+    username = models.CharField(
+        'Username',
+>>>>>>> 152dd30ebbb1a1a6a72d4166ef0c99464dc51bc3
 =======
     username = models.CharField(
         'Username',
@@ -19,7 +24,11 @@ class User(AbstractUser):
         unique=True,
         help_text=('Требуется не более 150 символов.'
 <<<<<<< HEAD
+<<<<<<< HEAD
                    'Только буквы, цифры и @/./+/-/_.'),
+=======
+                    'Только буквы, цифры и @/./+/-/_.'),
+>>>>>>> 152dd30ebbb1a1a6a72d4166ef0c99464dc51bc3
 =======
                     'Только буквы, цифры и @/./+/-/_.'),
 >>>>>>> 152dd30ebbb1a1a6a72d4166ef0c99464dc51bc3
@@ -29,7 +38,11 @@ class User(AbstractUser):
     )
     email = models.EmailField(
 <<<<<<< HEAD
+<<<<<<< HEAD
         'Адрес электронной почты',
+=======
+        'email address',
+>>>>>>> 152dd30ebbb1a1a6a72d4166ef0c99464dc51bc3
 =======
         'email address',
 >>>>>>> 152dd30ebbb1a1a6a72d4166ef0c99464dc51bc3
@@ -38,6 +51,7 @@ class User(AbstractUser):
     )
     first_name = models.CharField(
         'Имя',
+<<<<<<< HEAD
 <<<<<<< HEAD
         max_length=150
     )
@@ -51,6 +65,8 @@ class User(AbstractUser):
     )
 
 =======
+=======
+>>>>>>> 152dd30ebbb1a1a6a72d4166ef0c99464dc51bc3
         max_length=150,
         blank=True
     )
@@ -60,6 +76,9 @@ class User(AbstractUser):
         blank=True
     )
     
+<<<<<<< HEAD
+>>>>>>> 152dd30ebbb1a1a6a72d4166ef0c99464dc51bc3
+=======
 >>>>>>> 152dd30ebbb1a1a6a72d4166ef0c99464dc51bc3
     class Meta:
         ordering = ('username',)
@@ -73,6 +92,7 @@ class User(AbstractUser):
 class Follow(models.Model):
     """Модель Подписки на Пользователя"""
 <<<<<<< HEAD
+<<<<<<< HEAD
 
     follower = models.ForeignKey(User,
                                  on_delete=models.CASCADE,
@@ -82,6 +102,8 @@ class Follow(models.Model):
                                   on_delete=models.CASCADE,
                                   verbose_name='Подписан',
 =======
+=======
+>>>>>>> 152dd30ebbb1a1a6a72d4166ef0c99464dc51bc3
     follower = models.ForeignKey(User,
                              on_delete=models.CASCADE,
                              verbose_name = 'Подписчик',
@@ -89,6 +111,9 @@ class Follow(models.Model):
     following = models.ForeignKey(User,
                                   on_delete=models.CASCADE,
                                   verbose_name = 'Подписан',
+<<<<<<< HEAD
+>>>>>>> 152dd30ebbb1a1a6a72d4166ef0c99464dc51bc3
+=======
 >>>>>>> 152dd30ebbb1a1a6a72d4166ef0c99464dc51bc3
                                   related_name='follows_following')
 
@@ -105,7 +130,11 @@ class Follow(models.Model):
 
     def __str__(self):
 <<<<<<< HEAD
+<<<<<<< HEAD
         return f'{self.follower} на {self.following}'
+=======
+        return f'{self.follower} на {self.following}' 
+>>>>>>> 152dd30ebbb1a1a6a72d4166ef0c99464dc51bc3
 =======
         return f'{self.follower} на {self.following}' 
 >>>>>>> 152dd30ebbb1a1a6a72d4166ef0c99464dc51bc3

@@ -1,4 +1,5 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
 from api.permissions import IsAuthorPermission
 from django.core.exceptions import ObjectDoesNotExist
 from djoser.views import UserViewSet
@@ -23,6 +24,8 @@ class CustomUserViewSet(UserViewSet):
                           )
 
 =======
+=======
+>>>>>>> 152dd30ebbb1a1a6a72d4166ef0c99464dc51bc3
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework import status, viewsets, permissions
@@ -50,13 +53,20 @@ class CustomUserViewSet(viewsets.ModelViewSet):
             return UserSerializer
         return UserCreateSerializer
     
+<<<<<<< HEAD
+>>>>>>> 152dd30ebbb1a1a6a72d4166ef0c99464dc51bc3
+=======
 >>>>>>> 152dd30ebbb1a1a6a72d4166ef0c99464dc51bc3
     @action(
         methods=['get'],
         detail=False,
         url_path='me',
 <<<<<<< HEAD
+<<<<<<< HEAD
         permission_classes=[permissions.IsAuthenticated]
+=======
+        permission_classes=[IsAuthorPermission] # npoBepd
+>>>>>>> 152dd30ebbb1a1a6a72d4166ef0c99464dc51bc3
 =======
         permission_classes=[IsAuthorPermission] # npoBepd
 >>>>>>> 152dd30ebbb1a1a6a72d4166ef0c99464dc51bc3
@@ -66,7 +76,11 @@ class CustomUserViewSet(viewsets.ModelViewSet):
         serializer = UserSerializer(request.user,)
         return Response(serializer.data, status.HTTP_200_OK)
 <<<<<<< HEAD
+<<<<<<< HEAD
 
+=======
+    
+>>>>>>> 152dd30ebbb1a1a6a72d4166ef0c99464dc51bc3
 =======
     
 >>>>>>> 152dd30ebbb1a1a6a72d4166ef0c99464dc51bc3
@@ -75,8 +89,14 @@ class CustomUserViewSet(viewsets.ModelViewSet):
         detail=False,
         url_path='set_password',
 <<<<<<< HEAD
+<<<<<<< HEAD
         pagination_class=None
     )
+=======
+ #       permission_classes=(IsAuthorPermission),
+        pagination_class = None
+        )
+>>>>>>> 152dd30ebbb1a1a6a72d4166ef0c99464dc51bc3
 =======
  #       permission_classes=(IsAuthorPermission),
         pagination_class = None
@@ -89,7 +109,11 @@ class CustomUserViewSet(viewsets.ModelViewSet):
             data=request.data,
             context={'request': request}
 <<<<<<< HEAD
+<<<<<<< HEAD
         )
+=======
+            )
+>>>>>>> 152dd30ebbb1a1a6a72d4166ef0c99464dc51bc3
 =======
             )
 >>>>>>> 152dd30ebbb1a1a6a72d4166ef0c99464dc51bc3
@@ -99,7 +123,11 @@ class CustomUserViewSet(viewsets.ModelViewSet):
                 {'Пароль успешно изменен!'},
                 status=status.HTTP_204_NO_CONTENT
 <<<<<<< HEAD
+<<<<<<< HEAD
             )
+=======
+                )
+>>>>>>> 152dd30ebbb1a1a6a72d4166ef0c99464dc51bc3
 =======
                 )
 >>>>>>> 152dd30ebbb1a1a6a72d4166ef0c99464dc51bc3
@@ -109,6 +137,7 @@ class CustomUserViewSet(viewsets.ModelViewSet):
         detail=True,
         url_path='subscribe',
 <<<<<<< HEAD
+<<<<<<< HEAD
         permission_classes=[permissions.IsAuthenticated, IsAuthorPermission],
     )
     def subscribe(self, request, *args, **kwargs):
@@ -117,6 +146,8 @@ class CustomUserViewSet(viewsets.ModelViewSet):
             following = User.objects.get(id=self.kwargs.get('id'))
         except ObjectDoesNotExist:
 =======
+=======
+>>>>>>> 152dd30ebbb1a1a6a72d4166ef0c99464dc51bc3
         permission_classes = [permissions.IsAuthenticated, IsAuthorPermission],
         pagination_class = None
         )
@@ -125,6 +156,9 @@ class CustomUserViewSet(viewsets.ModelViewSet):
         try:
             following = User.objects.get(id=self.kwargs.get('pk'))
         except:
+<<<<<<< HEAD
+>>>>>>> 152dd30ebbb1a1a6a72d4166ef0c99464dc51bc3
+=======
 >>>>>>> 152dd30ebbb1a1a6a72d4166ef0c99464dc51bc3
             return Response({'errors': 'Объект не найден!'},
                             status=status.HTTP_404_NOT_FOUND)
@@ -134,7 +168,11 @@ class CustomUserViewSet(viewsets.ModelViewSet):
                 data=request.data,
                 context={'request': request, 'following': following}
 <<<<<<< HEAD
+<<<<<<< HEAD
             )
+=======
+                )
+>>>>>>> 152dd30ebbb1a1a6a72d4166ef0c99464dc51bc3
 =======
                 )
 >>>>>>> 152dd30ebbb1a1a6a72d4166ef0c99464dc51bc3
@@ -149,10 +187,15 @@ class CustomUserViewSet(viewsets.ModelViewSet):
                             status=status.HTTP_204_NO_CONTENT)
         else:
 <<<<<<< HEAD
+<<<<<<< HEAD
             return Response(
                 {'errors': 'Вы не подписаны на этого пользователя!'},
                 status=status.HTTP_400_BAD_REQUEST
             )
+=======
+            return Response({'errors': 'Вы не подписаны на этого пользователя!'},
+                                status=status.HTTP_400_BAD_REQUEST)
+>>>>>>> 152dd30ebbb1a1a6a72d4166ef0c99464dc51bc3
 =======
             return Response({'errors': 'Вы не подписаны на этого пользователя!'},
                                 status=status.HTTP_400_BAD_REQUEST)
@@ -163,8 +206,13 @@ class CustomUserViewSet(viewsets.ModelViewSet):
         detail=False,
         url_path='subscriptions',
 <<<<<<< HEAD
+<<<<<<< HEAD
         permission_classes=[permissions.IsAuthenticated]
     )
+=======
+        permission_classes=[IsAuthorPermission] #-||-
+        )
+>>>>>>> 152dd30ebbb1a1a6a72d4166ef0c99464dc51bc3
 =======
         permission_classes=[IsAuthorPermission] #-||-
         )

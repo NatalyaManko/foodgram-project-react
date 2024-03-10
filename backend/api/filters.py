@@ -1,4 +1,5 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
 from django.forms.fields import CharField
 from django_filters import CharFilter, FilterSet, ModelMultipleChoiceFilter
 from django_filters.fields import MultipleChoiceField
@@ -7,12 +8,17 @@ from django_filters.filters import Filter, NumberFilter
 from recipes.models import Ingredient, Recipe, Tag
 from users.models import User
 =======
+=======
+>>>>>>> 152dd30ebbb1a1a6a72d4166ef0c99464dc51bc3
 from django_filters import FilterSet, CharFilter, ModelMultipleChoiceFilter
 from django_filters.fields import MultipleChoiceField
 
 from django_filters.filters import Filter
 from recipes.models import Tag, Ingredient, Recipe, Favorite, ShoppingCart
 from django.forms.fields import CharField
+<<<<<<< HEAD
+>>>>>>> 152dd30ebbb1a1a6a72d4166ef0c99464dc51bc3
+=======
 >>>>>>> 152dd30ebbb1a1a6a72d4166ef0c99464dc51bc3
 
 
@@ -45,6 +51,7 @@ class TagFilter(FilterSet):
     class Meta:
         model = Tag
 <<<<<<< HEAD
+<<<<<<< HEAD
         fields = {'name': ['contains']}
 
 
@@ -53,6 +60,8 @@ class IngredientFilter(FilterSet):
     name = CharFilter(field_name='name', label='Ингредиент')
 
 =======
+=======
+>>>>>>> 152dd30ebbb1a1a6a72d4166ef0c99464dc51bc3
         fields = ('name',)
 
 
@@ -60,6 +69,9 @@ class IngredientFilter(FilterSet):
     
     name = CharFilter(field_name='name', label='Ингредиент')
    
+<<<<<<< HEAD
+>>>>>>> 152dd30ebbb1a1a6a72d4166ef0c99464dc51bc3
+=======
 >>>>>>> 152dd30ebbb1a1a6a72d4166ef0c99464dc51bc3
     class Meta:
         model = Ingredient
@@ -68,6 +80,7 @@ class IngredientFilter(FilterSet):
 
 class RecipeFilter(FilterSet):
 
+<<<<<<< HEAD
 <<<<<<< HEAD
     author = ModelMultipleChoiceFilter(queryset=User.objects.all(),
                                        field_name='author__username',
@@ -98,6 +111,8 @@ class RecipeFilter(FilterSet):
             return queryset.filter(shopping_cart__user=self.request.user)
         return queryset
 =======
+=======
+>>>>>>> 152dd30ebbb1a1a6a72d4166ef0c99464dc51bc3
     author = CharFilter(field_name='author__username',
                                       lookup_expr='icontains',
                                       label='Имя автора')
@@ -118,5 +133,9 @@ class RecipeFilter(FilterSet):
         fields = ('favorites',
                   'author',
                   'tags',
+<<<<<<< HEAD
+                  'shopping_cart',)
+>>>>>>> 152dd30ebbb1a1a6a72d4166ef0c99464dc51bc3
+=======
                   'shopping_cart',)
 >>>>>>> 152dd30ebbb1a1a6a72d4166ef0c99464dc51bc3

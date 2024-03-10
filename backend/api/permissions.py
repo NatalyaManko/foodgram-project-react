@@ -2,6 +2,7 @@ from rest_framework import permissions
 
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 class IsAuthorPermission(permissions.BasePermission):
     """Права автора на Редактирование|Удаление своих объектов"""
 
@@ -46,6 +47,8 @@ class IsAdminOrReadOnlyPermission(permissions.BasePermission):
                 and request.user.is_staff)
         )
 =======
+=======
+>>>>>>> 152dd30ebbb1a1a6a72d4166ef0c99464dc51bc3
 class ReadOnly(permissions.BasePermission):
     """
     Кастомный пермишен для просмотра объекта
@@ -131,4 +134,7 @@ class IsAuthorOrAdminPermission(permissions.BasePermission):
         return (request.user == obj.id
                 or request.user.is_admin
                 )
+<<<<<<< HEAD
+>>>>>>> 152dd30ebbb1a1a6a72d4166ef0c99464dc51bc3
+=======
 >>>>>>> 152dd30ebbb1a1a6a72d4166ef0c99464dc51bc3

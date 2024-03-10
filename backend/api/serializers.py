@@ -1,5 +1,6 @@
 import base64
 <<<<<<< HEAD
+<<<<<<< HEAD
 
 import webcolors
 from django.core.exceptions import ObjectDoesNotExist
@@ -19,6 +20,8 @@ from recipes.models import (Favorite,
 from users.serializers import UserSerializer
 
 =======
+=======
+>>>>>>> 152dd30ebbb1a1a6a72d4166ef0c99464dc51bc3
 import webcolors
 from django.core.files.base import ContentFile
 from django.shortcuts import get_object_or_404
@@ -35,6 +38,9 @@ from rest_framework.relations import (PrimaryKeyRelatedField)
 from django.core.validators import MinValueValidator
 
 from rest_framework import status
+<<<<<<< HEAD
+>>>>>>> 152dd30ebbb1a1a6a72d4166ef0c99464dc51bc3
+=======
 >>>>>>> 152dd30ebbb1a1a6a72d4166ef0c99464dc51bc3
 
 class Hex2NameColor(serializers.Field):
@@ -63,8 +69,13 @@ class Base64ImageField(serializers.ImageField):
 
         return super().to_internal_value(data)
 <<<<<<< HEAD
+<<<<<<< HEAD
 
 
+=======
+    
+    
+>>>>>>> 152dd30ebbb1a1a6a72d4166ef0c99464dc51bc3
 =======
     
     
@@ -79,6 +90,7 @@ class TagSerializer(serializers.ModelSerializer):
         fields = ('id', 'name', 'color', 'slug',)
 
 
+<<<<<<< HEAD
 <<<<<<< HEAD
 class RecipeTagSerializer(serializers.ModelSerializer):
     """Связная модель с количеством для Рецепта"""
@@ -100,6 +112,11 @@ class IngredientSerializer(serializers.ModelSerializer):
     """Чтение Ингредиентов"""
    
 >>>>>>> 152dd30ebbb1a1a6a72d4166ef0c99464dc51bc3
+=======
+class IngredientSerializer(serializers.ModelSerializer):
+    """Чтение Ингредиентов"""
+   
+>>>>>>> 152dd30ebbb1a1a6a72d4166ef0c99464dc51bc3
     class Meta:
         model = Ingredient
         fields = ('id', 'name', 'measurement_unit',)
@@ -114,8 +131,13 @@ class RecipeIngredientSerializer(serializers.ModelSerializer):
     measurement_unit = serializers.ReadOnlyField(
         source='ingredient.measurement_unit'
 <<<<<<< HEAD
+<<<<<<< HEAD
     )
 
+=======
+        )
+    
+>>>>>>> 152dd30ebbb1a1a6a72d4166ef0c99464dc51bc3
 =======
         )
     
@@ -129,17 +151,23 @@ class AddRecipeIngredientSerializer(serializers.ModelSerializer):
     """Ингредиенты с количеством для создания рецепта """
 
 <<<<<<< HEAD
+<<<<<<< HEAD
     id = serializers.IntegerField()
     amount = serializers.IntegerField(
         validators=[
             MinValueValidator(
                 1, message='Количество ингредиента не может быть меньше 1'
 =======
+=======
+>>>>>>> 152dd30ebbb1a1a6a72d4166ef0c99464dc51bc3
    # id =  PrimaryKeyRelatedField(queryset=Ingredient.objects.all())
     id = serializers.IntegerField()
     amount = serializers.IntegerField(
         validators=[MinValueValidator(
             1, message='Количество ингредиента не может быть меньше 1'
+<<<<<<< HEAD
+>>>>>>> 152dd30ebbb1a1a6a72d4166ef0c99464dc51bc3
+=======
 >>>>>>> 152dd30ebbb1a1a6a72d4166ef0c99464dc51bc3
             )
         ]
@@ -158,6 +186,7 @@ class RecipeSerializer(serializers.ModelSerializer):
     image = Base64ImageField(
         read_only=True
 <<<<<<< HEAD
+<<<<<<< HEAD
     )
     cooking_time = serializers.IntegerField()
 
@@ -168,6 +197,8 @@ class RecipeSerializer(serializers.ModelSerializer):
                   'image',
                   'cooking_time',)
 =======
+=======
+>>>>>>> 152dd30ebbb1a1a6a72d4166ef0c99464dc51bc3
         )
     cooking_time = serializers.IntegerField()
     
@@ -183,12 +214,16 @@ class RecipeSerializer(serializers.ModelSerializer):
   #      if obj.image:
   #          return obj.image.url
   #      return None
+<<<<<<< HEAD
+>>>>>>> 152dd30ebbb1a1a6a72d4166ef0c99464dc51bc3
+=======
 >>>>>>> 152dd30ebbb1a1a6a72d4166ef0c99464dc51bc3
 
 
 class RecipeCreateSerializer(serializers.ModelSerializer):
     """Запись Рецептов"""
 
+<<<<<<< HEAD
 <<<<<<< HEAD
     author = UserSerializer(read_only=True)
     ingredients = AddRecipeIngredientSerializer(
@@ -210,6 +245,8 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
     is_favorited = serializers.SerializerMethodField()
     is_in_shopping_cart = serializers.SerializerMethodField()
 =======
+=======
+>>>>>>> 152dd30ebbb1a1a6a72d4166ef0c99464dc51bc3
     #id = serializers.ReadOnlyField()
     author = UserSerializer(read_only=True)
     ingredients = AddRecipeIngredientSerializer(
@@ -227,11 +264,15 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
             )
         ]
     )
+<<<<<<< HEAD
+>>>>>>> 152dd30ebbb1a1a6a72d4166ef0c99464dc51bc3
+=======
 >>>>>>> 152dd30ebbb1a1a6a72d4166ef0c99464dc51bc3
 
     class Meta:
         model = Recipe
         fields = ('id',
+<<<<<<< HEAD
 <<<<<<< HEAD
                   'tags',
                   'author',
@@ -243,11 +284,17 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
                   'author',
                   'ingredients',
 >>>>>>> 152dd30ebbb1a1a6a72d4166ef0c99464dc51bc3
+=======
+                  'tags',                  
+                  'author',
+                  'ingredients',
+>>>>>>> 152dd30ebbb1a1a6a72d4166ef0c99464dc51bc3
                   'image',
                   'name',
                   'text',
                   'cooking_time',
                   )
+<<<<<<< HEAD
 <<<<<<< HEAD
         read_only_fields = ('author',
                             'is_favorited',
@@ -282,6 +329,8 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
             tag_arr.append(tag)
         return data
 =======
+=======
+>>>>>>> 152dd30ebbb1a1a6a72d4166ef0c99464dc51bc3
         read_only_fields = ('author',)
 
     def validate_ingredients(self, value):
@@ -314,11 +363,15 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
                 'Теги не должны повторяться!')
             tag_arr.append(tag)                
         return value
+<<<<<<< HEAD
+>>>>>>> 152dd30ebbb1a1a6a72d4166ef0c99464dc51bc3
+=======
 >>>>>>> 152dd30ebbb1a1a6a72d4166ef0c99464dc51bc3
 
     @staticmethod
     def _save_recipe(recipe, ingredients, tags):
         for ingredient in ingredients:
+<<<<<<< HEAD
 <<<<<<< HEAD
             amount = ingredient['amount']
             try:
@@ -330,12 +383,17 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
                     {'detail': 'Такой ингредиент не существует!'}
                 )
 =======
+=======
+>>>>>>> 152dd30ebbb1a1a6a72d4166ef0c99464dc51bc3
             amount = ingredient['amount'] #.amount
 #            breakpoint()
             ingredient = get_object_or_404(
                 Ingredient,
                 id=ingredient['id']
             )
+<<<<<<< HEAD
+>>>>>>> 152dd30ebbb1a1a6a72d4166ef0c99464dc51bc3
+=======
 >>>>>>> 152dd30ebbb1a1a6a72d4166ef0c99464dc51bc3
             RecipeIngredient.objects.create(
                 ingredient=ingredient,
@@ -358,7 +416,11 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
         tags = validated_data.pop('tags')
         instance.ingredients.clear()
 <<<<<<< HEAD
+<<<<<<< HEAD
         instance.tags.set(tags)
+=======
+    #    instance.tags.set(tags)
+>>>>>>> 152dd30ebbb1a1a6a72d4166ef0c99464dc51bc3
 =======
     #    instance.tags.set(tags)
 >>>>>>> 152dd30ebbb1a1a6a72d4166ef0c99464dc51bc3
@@ -366,6 +428,7 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
         return super().update(instance, validated_data)
 
     def to_representation(self, instance):
+<<<<<<< HEAD
 <<<<<<< HEAD
         display = super().to_representation(instance)
         display['ingredients'] = RecipeIngredientSerializer(
@@ -386,16 +449,22 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
             return ShoppingCart.objects.filter(recipe=obj).exists()
         return False
 =======
+=======
+>>>>>>> 152dd30ebbb1a1a6a72d4166ef0c99464dc51bc3
         ingredients = super().to_representation(instance)
         ingredients['ingredients'] = RecipeIngredientSerializer(
             instance.recipes_ingredients.all(), many=True).data
         return ingredients
+<<<<<<< HEAD
+>>>>>>> 152dd30ebbb1a1a6a72d4166ef0c99464dc51bc3
+=======
 >>>>>>> 152dd30ebbb1a1a6a72d4166ef0c99464dc51bc3
 
 
 class RecipeGetSerializer(serializers.ModelSerializer):
     """Сериализатор чтения Рецептa"""
 
+<<<<<<< HEAD
 <<<<<<< HEAD
     author = UserSerializer
     ingredients = RecipeIngredientSerializer(many=True,
@@ -407,18 +476,24 @@ class RecipeGetSerializer(serializers.ModelSerializer):
     is_favorited = serializers.SerializerMethodField()
     is_in_shopping_cart = serializers.SerializerMethodField()
 =======
+=======
+>>>>>>> 152dd30ebbb1a1a6a72d4166ef0c99464dc51bc3
     ingredients = RecipeIngredientSerializer(many=True,
                                           read_only=True,
                                           source='recipes_ingredients')
     tags = TagSerializer(many=True, read_only=True)
     image_url = serializers.SerializerMethodField('get_image_url',
                                                   read_only=True)
+<<<<<<< HEAD
+>>>>>>> 152dd30ebbb1a1a6a72d4166ef0c99464dc51bc3
+=======
 >>>>>>> 152dd30ebbb1a1a6a72d4166ef0c99464dc51bc3
 
     class Meta:
         model = Recipe
         fields = ('id',
                   'tags',
+<<<<<<< HEAD
 <<<<<<< HEAD
                   'author',
                   'ingredients',
@@ -429,6 +504,8 @@ class RecipeGetSerializer(serializers.ModelSerializer):
                   'text',
                   'cooking_time',)
 =======
+=======
+>>>>>>> 152dd30ebbb1a1a6a72d4166ef0c99464dc51bc3
                   'author',                 
                   'ingredients',
  #                 'is_favorited', # находится ли в избранном
@@ -439,6 +516,9 @@ class RecipeGetSerializer(serializers.ModelSerializer):
                   'cooking_time',
 )
     #    read_only_fields = ('author',)
+<<<<<<< HEAD
+>>>>>>> 152dd30ebbb1a1a6a72d4166ef0c99464dc51bc3
+=======
 >>>>>>> 152dd30ebbb1a1a6a72d4166ef0c99464dc51bc3
 
     def get_image_url(self, obj):
@@ -446,6 +526,7 @@ class RecipeGetSerializer(serializers.ModelSerializer):
             return obj.image.url
         return None
 
+<<<<<<< HEAD
 <<<<<<< HEAD
     def get_is_favorited(self, obj):
         user = self.context.get('request').user
@@ -462,6 +543,8 @@ class RecipeGetSerializer(serializers.ModelSerializer):
 
 =======
 >>>>>>> 152dd30ebbb1a1a6a72d4166ef0c99464dc51bc3
+=======
+>>>>>>> 152dd30ebbb1a1a6a72d4166ef0c99464dc51bc3
 class ShoppingCartSerializer(serializers.ModelSerializer):
     """Сериализатор Списка покупок"""
     name = serializers.ReadOnlyField(source='recipe.name',
@@ -470,7 +553,11 @@ class ShoppingCartSerializer(serializers.ModelSerializer):
                              read_only=True)
     cooking_time = serializers.IntegerField(source='recipe.cooking_time',
 <<<<<<< HEAD
+<<<<<<< HEAD
                                             read_only=True)
+=======
+                                             read_only=True)
+>>>>>>> 152dd30ebbb1a1a6a72d4166ef0c99464dc51bc3
 =======
                                              read_only=True)
 >>>>>>> 152dd30ebbb1a1a6a72d4166ef0c99464dc51bc3
@@ -488,7 +575,11 @@ class FavoriteSerializer(serializers.ModelSerializer):
                              read_only=True)
     cooking_time = serializers.IntegerField(source='recipe.cooking_time',
 <<<<<<< HEAD
+<<<<<<< HEAD
                                             read_only=True)
+=======
+                                             read_only=True)
+>>>>>>> 152dd30ebbb1a1a6a72d4166ef0c99464dc51bc3
 =======
                                              read_only=True)
 >>>>>>> 152dd30ebbb1a1a6a72d4166ef0c99464dc51bc3
@@ -505,10 +596,17 @@ class FavoriteSerializer(serializers.ModelSerializer):
                 user=user).exists():
             raise ValidationError(
 <<<<<<< HEAD
+<<<<<<< HEAD
                 {'errors': 'Вы уже добавили этот рецепт в избранное!'},
                 code=status.HTTP_400_BAD_REQUEST
             )
         return data
+=======
+               {'errors': 'Вы уже добавили этот рецепт в избранное!'},
+                code=status.HTTP_400_BAD_REQUEST
+                )
+        return data
+>>>>>>> 152dd30ebbb1a1a6a72d4166ef0c99464dc51bc3
 =======
                {'errors': 'Вы уже добавили этот рецепт в избранное!'},
                 code=status.HTTP_400_BAD_REQUEST
