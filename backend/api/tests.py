@@ -17,11 +17,13 @@ class FoodgramAPITestCase(TestCase):
 
     def test_list_exists(self):
         """Проверка доступности списка задач."""
+        
         response = self.client.get('/api/recipes/')
         self.assertEqual(response.status_code, HTTPStatus.OK)
 
     def test_task_creation(self):
         """Проверка создания задачи."""
+        
         data = {'name': 'Test', 'text': 'Test'}
         response = self.guest_client.post('/api/recipes/', data=data)
         self.assertEqual(response.status_code, HTTPStatus.CREATED)
