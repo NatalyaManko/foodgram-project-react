@@ -13,12 +13,18 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['127.0.0.1', 'localhost', 'gurman.myftp.biz']
 
-CORS_ALLOWED_ORIGINS = [
-    'https://gurman.myftp.biz'
+CSRF_FAILURE_VIEW = 'foodgram.views.csrf_failure_view'
+
+CORS_ORIGIN_ALLOW_ALL = True
+
+CORS_ALLOW_METHODS = [
+    "DELETE",
+    "OPTIONS",
+    "PATCH",
+    "POST",
+    "PUT",
 ]
-CSRF_TRUSTED_ORIGINS = [
-    'https://gurman.myftp.biz'
-]
+
 CORS_URLS_REGEX = r'^/api/.*$'
 
 """
