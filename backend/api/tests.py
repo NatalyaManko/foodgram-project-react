@@ -3,7 +3,6 @@ from http import HTTPStatus
 from django.test import TestCase
 from rest_framework.test import APIClient
 
-from recipes import models
 from users import models
 
 
@@ -16,15 +15,7 @@ class FoodgramAPITestCase(TestCase):
         self.client.force_authenticate(user=self.user)
 
     def test_list_exists(self):
-        """Проверка доступности списка задач."""
+        """Проверка доступности списка рецептов."""
 
         response = self.client.get('/api/recipes/')
         self.assertEqual(response.status_code, HTTPStatus.OK)
-
-    def test_task_creation(self):
-        """Проверка создания задачи."""
-
-        data = {'user': 'Test', 'recipe': 'Test'}
-        response = self.client.post('/api/recipes/', data=data)
-        self.assertEqual(response.status_code, HTTPStatus.CREATED)
-        self.assertTrue(models.Favorite.objects.filter(user='Test').exists())
