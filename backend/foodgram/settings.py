@@ -14,7 +14,9 @@ DEBUG = True
 ALLOWED_HOSTS = ['127.0.0.1', 'localhost', 'gurman.myftp.biz']
 
 CORS_ALLOWED_ORIGINS = [
-    'http://localhost:3000',
+    'https://gurman.myftp.biz'
+]
+CSRF_TRUSTED_ORIGINS = [
     'https://gurman.myftp.biz'
 ]
 CORS_URLS_REGEX = r'^/api/.*$'
