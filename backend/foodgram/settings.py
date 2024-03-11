@@ -13,7 +13,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['127.0.0.1', 'localhost', 'gurman.myftp.biz']
 
-CSRF_COOKIE_SECURE=False
+CSRF_COOKIE_SECURE = False
 
 CORS_ORIGIN_ALLOW_ALL = True
 
