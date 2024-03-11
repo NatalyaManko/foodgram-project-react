@@ -1,7 +1,5 @@
 from django.contrib import admin
 
-<<<<<<< HEAD
-<<<<<<< HEAD
 from .models import (Favorite,
                      Ingredient,
                      Recipe,
@@ -39,15 +37,15 @@ class RecipeTagInline(admin.StackedInline):
 
 class RecipeAdmin(admin.ModelAdmin):
     inlines = (RecipeIngredientInline,
-               RecipeTagInline)
+               RecipeTagInline,)
 
     list_display = ('id',
                     'name',
                     'author',
                     'favorite_count')
+    list_editable = ('name', 'author',)
     search_fields = ('name',)
     list_filter = ('name', 'author', 'tags')
-    list_display_links = ('name',)
 
     def favorite_count(self, obj):
         return obj.favorites.count()
@@ -55,58 +53,10 @@ class RecipeAdmin(admin.ModelAdmin):
     favorite_count.short_description = 'Число добавлений рецепта в избранное'
 
 
-=======
-=======
->>>>>>> 152dd30ebbb1a1a6a72d4166ef0c99464dc51bc3
-from .models import (Ingredient, Tag, Recipe, RecipeIngredient, RecipeTag,
-                     ShoppingCart)
-
-
-class IngredientAdmin(admin.ModelAdmin):
-    
-    list_display = ('name', 'measurement_unit',)
-    list_editable = ('measurement_unit',)
-    search_fields = ('name',)
-    list_filter = ('name',)
-  #  list_display_links = ('name',)
- 
-    
-class TagAdmin(admin.ModelAdmin):
-    
-    list_display = ('name', 'slug', 'color',)
-    list_editable = ('slug', 'color',)
- #   list_display_links = ('name',)
-
-
-class RecipeAdmin(admin.ModelAdmin):
-    
-    list_display = ('name',
-                    'author')
- #   list_editable = ('text',
- #                   'ingredients',
- #                   'cooking_time',
- #                   'tags')
-    search_fields = ('name',)
-    list_filter = ('name', 'author', 'tags')
-    list_display_links = ('name',)
-    filter_horizontal = ('ingredients',)
-    
-<<<<<<< HEAD
->>>>>>> 152dd30ebbb1a1a6a72d4166ef0c99464dc51bc3
-=======
->>>>>>> 152dd30ebbb1a1a6a72d4166ef0c99464dc51bc3
 admin.site.register(Ingredient, IngredientAdmin)
 admin.site.register(Tag, TagAdmin)
 admin.site.register(Recipe, RecipeAdmin)
 admin.site.register(RecipeIngredient)
 admin.site.register(RecipeTag)
-<<<<<<< HEAD
-<<<<<<< HEAD
 admin.site.register(ShoppingCart)
 admin.site.register(Favorite)
-=======
-admin.site.register(ShoppingCart)
->>>>>>> 152dd30ebbb1a1a6a72d4166ef0c99464dc51bc3
-=======
-admin.site.register(ShoppingCart)
->>>>>>> 152dd30ebbb1a1a6a72d4166ef0c99464dc51bc3

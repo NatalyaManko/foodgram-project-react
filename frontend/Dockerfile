@@ -1,4 +1,3 @@
-# build env
 FROM node:12.20.2-alpine as build
 WORKDIR /app
 COPY package*.json ./
