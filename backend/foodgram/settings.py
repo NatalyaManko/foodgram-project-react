@@ -13,7 +13,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['127.0.0.1', 'localhost', 'gurman.myftp.biz']
 
-CSRF_FAILURE_VIEW = 'foodgram.views.csrf_failure_view'
+CSRF_FAILURE_VIEW = 'foodgram.csrf_failure_view'
 
 CORS_ORIGIN_ALLOW_ALL = True
 
