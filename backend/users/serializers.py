@@ -1,8 +1,4 @@
 import api.serializers
-from django.contrib.auth import authenticate
-from django.contrib.auth.hashers import check_password, make_password
-from django.contrib.auth.password_validation import validate_password
-from django.core import exceptions
 from djoser.serializers import UserCreateSerializer as BaseUserRegistration
 from djoser.serializers import UserSerializer
 from rest_framework import serializers, status
