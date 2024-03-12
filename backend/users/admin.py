@@ -15,7 +15,6 @@ class UserAdmin(admin.ModelAdmin):
                     'password',
                     'is_staff',
                     'is_active',
-                    'group',
                     'is_superuser')
     list_editable = ('username',
                      'email',
@@ -23,10 +22,8 @@ class UserAdmin(admin.ModelAdmin):
                      'last_name',
                      'password',
                      'is_staff',
-                     'is_active',
-                     'group',)
+                     'is_active',)
     search_fields = ('last_name',)
-    list_display_links = None
 
 
 admin.site.register(User, UserAdmin)
