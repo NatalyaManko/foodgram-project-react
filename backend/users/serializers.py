@@ -1,4 +1,5 @@
 import api.serializers
+from django.contrib.auth import authenticate
 from django.contrib.auth.hashers import check_password
 from django.contrib.auth.password_validation import validate_password
 from django.core import exceptions
@@ -67,16 +68,21 @@ class UserCreateSerializer(BaseUserRegistration):
 class PasswordChangeSerializer(serializers.ModelSerializer):
     """Изменение пароля"""
 
-    new_password = serializers.CharField(required=True)
-    current_password = serializers.CharField(required=True)
+    new_password = serializers.CharField()
+    current_password = serializers.CharField()
 
-    class Meta:
-        model = User
-        fields = ('new_password', 'current_password',)
-        extra_kwargs = {
-            'first_name': {'required': True, 'allow_blank': False},
-            'last_name': {'required': True, 'allow_blank': False},
-        }
+    def validate_current_password(self, current_password):
+        user = self.context['reguest'].user
+        if not authenticate(email=user.email,
+                            password=current_password):
+            raise ValidationError(
+                {'authorization': 'Пройдите авторизацию!'}
+            )
+        return current_password
+
+    def validate_new_password(self, new_password):
+        validate_password(new_password)
+        return new_password
 
     def update(self, instance, validated_data):
 

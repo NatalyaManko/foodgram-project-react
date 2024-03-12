@@ -52,16 +52,16 @@ class CustomUserViewSet(UserViewSet):
             data=request.data,
             context={'request': request}
         )
-        if serializer.is_valid(raise_exception=True):
-            self.request.user.set_password(
-                request.data['new_password']
-            )
+        if serializer.is_valid():
             serializer.save()
             return Response(
                 {'Пароль успешно изменен!'},
                 status=status.HTTP_204_NO_CONTENT
             )
-        return Response(serializer.errors, status=status.HTTP_401_UNAUTHORIZED)
+        return Response(
+            {'errors': 'Введены неверные данные!'},
+            status=status.HTTP_400_BAD_REQUEST
+        )
 
     @action(
         methods=['post', 'delete'],
