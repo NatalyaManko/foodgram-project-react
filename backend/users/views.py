@@ -54,7 +54,7 @@ class CustomUserViewSet(UserViewSet):
         )
         if serializer.is_valid(raise_exception=True):
             self.request.user.set_password(
-                request.data.context['new_password']
+                request.data['new_password']
             )
             serializer.save()
             return Response(
