@@ -1,9 +1,9 @@
 import base64
 
 import webcolors
-from django.core.exceptions import ObjectDoesNotExist
 from django.core.files.base import ContentFile
 from django.core.validators import MinValueValidator
+from django.shortcuts import get_object_or_404
 from rest_framework import serializers, status
 from rest_framework.relations import PrimaryKeyRelatedField
 
@@ -230,14 +230,7 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
     def _save_recipe(recipe, ingredients, tags):
         for ingredient in ingredients:
             amount = ingredient['amount']
-            try:
-                ingredient = Ingredient.objects.get(
-                    id=ingredient['id']
-                )
-            except ObjectDoesNotExist:
-                raise serializers.ValidationError(
-                    {'detail': 'Такой ингредиент не существует!'}
-                )
+            ingredient = get_object_or_404(Ingredient, pk=ingredient['id'])
             RecipeIngredient.objects.create(
                 ingredient=ingredient,
                 recipe=recipe,
