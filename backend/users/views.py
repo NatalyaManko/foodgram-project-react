@@ -42,7 +42,7 @@ class CustomUserViewSet(UserViewSet):
         methods=['post'],
         detail=False,
         url_path='set_password',
-        permission_classes=[permissions.IsAuthenticated],
+        permission_classes=[permissions.IsAuthenticated,],
         pagination_class=None
     )
     def password_change(self, request):
@@ -53,6 +53,7 @@ class CustomUserViewSet(UserViewSet):
             context={'request': request}
         )
         if serializer.is_valid(raise_exception=True):
+            self.request.user.set_password(serializer.data['new_password'])
             serializer.save()
             return Response(
                 {'Пароль успешно изменен!'},
