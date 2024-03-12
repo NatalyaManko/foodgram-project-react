@@ -1,5 +1,6 @@
 from api.permissions import IsAuthorPermission
 from django.core.exceptions import ObjectDoesNotExist
+from djoser.serializers import SetPasswordSerializer
 from djoser.views import UserViewSet
 from rest_framework import permissions, status
 from rest_framework.decorators import action
@@ -8,7 +9,6 @@ from rest_framework.response import Response
 
 from .models import Follow, User
 from .serializers import (FollowSerializer,
-                          PasswordChangeSerializer,
                           UserCreateSerializer,
                           UserSerializer)
 
@@ -47,7 +47,7 @@ class CustomUserViewSet(UserViewSet):
     )
     def password_change(self, request):
         """Смена пароля"""
-        serializer = PasswordChangeSerializer(
+        serializer = SetPasswordSerializer(
             request.user,
             data=request.data,
             context={'request': request}
@@ -59,7 +59,7 @@ class CustomUserViewSet(UserViewSet):
                 {'Пароль успешно изменен!'},
                 status=status.HTTP_204_NO_CONTENT
             )
-        return Response(serializer.errors, status=status.HTTP_401_UNAUTHORIZED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     @action(
         methods=['post', 'delete'],
