@@ -1,6 +1,6 @@
 import api.serializers
 from django.contrib.auth import authenticate
-from django.contrib.auth.hashers import check_password
+from django.contrib.auth.hashers import check_password, make_password
 from django.contrib.auth.password_validation import validate_password
 from django.core import exceptions
 from djoser.serializers import UserCreateSerializer as BaseUserRegistration
@@ -71,36 +71,31 @@ class PasswordChangeSerializer(serializers.Serializer):
     new_password = serializers.CharField(required=True)
     current_password = serializers.CharField(required=True)
 
-    def validate_current_password(self, current_password):
+    def validate(self, data):
         user = self.context['request'].user
+        user_password = user.password
         if not authenticate(email=user.email,
-                            password=current_password):
+                            password=data.get('current_password')):
             raise ValidationError(
                 {'authorization': 'Пройдите авторизацию!'}
             )
-        return current_password
-
-    def validate_new_password(self, new_password):
-        validate_password(new_password)
-        return new_password
-
-    def update(self, instance, validated_data):
-
-        request = self.context['request']
-        user_password = request.user.password
         if not check_password(
-            validated_data['current_password'], user_password
+            'current_password', user_password
         ):
             raise ValidationError(
                 {'current_password': 'Неправильный текущий пароль!'}
             )
-        if (validated_data['current_password']
-           == validated_data['new_password']):
+        if data.get['current_password'] == data.get['new_password']:
             raise ValidationError(
                 {'new_password': 'Новый пароль должен отличаться от текущего!'}
             )
-        instance.set_password(validated_data['new_password'])
-        instance.save()
+        return data
+
+    def create(self, validated_data):
+        user = self.context['request'].user
+        password = make_password(validated_data.get('new_password'))
+        user.password = password
+        user.save()
         return validated_data
 
     def validate(self, obj):
