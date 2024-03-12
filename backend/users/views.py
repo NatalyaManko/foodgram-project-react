@@ -54,7 +54,7 @@ class CustomUserViewSet(UserViewSet):
         )
         if serializer.is_valid(raise_exception=True):
             self.request.user.set_password(serializer.data['new_password'])
-            serializer.save()
+            self.request.user.save()
             return Response(
                 {'Пароль успешно изменен!'},
                 status=status.HTTP_204_NO_CONTENT
