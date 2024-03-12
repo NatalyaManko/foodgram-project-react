@@ -23,7 +23,7 @@ class IngredientAdmin(admin.ModelAdmin):
 class TagAdmin(admin.ModelAdmin):
 
     list_display = ('id', 'name', 'slug', 'color',)
-    list_editable = ('slug', 'color',)
+    list_editable = ('name', 'slug', 'color',)
 
 
 class RecipeIngredientInline(admin.StackedInline):

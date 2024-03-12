@@ -42,6 +42,7 @@ class CustomUserViewSet(UserViewSet):
         methods=['post'],
         detail=False,
         url_path='set_password',
+        permission_classes=[permissions.IsAuthenticated],
         pagination_class=None
     )
     def password_change(self, request):
