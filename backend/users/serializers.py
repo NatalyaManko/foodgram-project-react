@@ -72,7 +72,7 @@ class PasswordChangeSerializer(serializers.Serializer):
     current_password = serializers.CharField(required=True)
 
     def validate_current_password(self, current_password):
-        user = self.context['reguest'].user
+        user = self.context['request'].user
         if not authenticate(email=user.email,
                             password=current_password):
             raise ValidationError(
