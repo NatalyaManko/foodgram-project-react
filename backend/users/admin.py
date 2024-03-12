@@ -7,15 +7,7 @@ from .models import Follow, User
 @csrf_exempt
 class UserAdmin(admin.ModelAdmin):
 
-    list_display = ('id',
-                    'username',
-                    'email',
-                    'first_name',
-                    'last_name',
-                    'password',
-                    'is_staff',
-                    'is_active',
-                    'is_superuser')
+    list_display = '__all__'
     list_editable = ('username',
                      'email',
                      'first_name',
