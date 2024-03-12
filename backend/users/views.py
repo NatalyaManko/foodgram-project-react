@@ -29,6 +29,7 @@ class CustomUserViewSet(UserViewSet):
     @action(
         methods=['get'],
         detail=False,
+        url_path='me',
         permission_classes=[permissions.IsAuthenticated],
         pagination_class=None
     )
@@ -40,6 +41,7 @@ class CustomUserViewSet(UserViewSet):
     @action(
         methods=['post'],
         detail=False,
+        url_path='set_password',
         permission_classes=[permissions.IsAuthenticated],
         pagination_class=None
     )
