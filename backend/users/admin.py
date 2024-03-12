@@ -21,6 +21,7 @@ class UserAdmin(admin.ModelAdmin):
                      'first_name',
                      'last_name',
                      'password',
+                     'is_staff',
                      'is_active',)
     search_fields = ('last_name',)
     list_display_links = None
