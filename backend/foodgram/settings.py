@@ -13,7 +13,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['158.160.79.149', '127.0.0.1', 'localhost', 'gurman.myftp.biz']
 
-CSRF_TRUSTED_ORIGINS = ['https://gurman.myftp.biz']
+CSRF_TRUSTED_ORIGINS = ['http://gurman.myftp.biz']
 
 CSRF_COOKIE_DOMAIN = 'gurman.myftp.biz'
 
@@ -172,8 +172,3 @@ DJOSER = {
         'user': ('rest_framework.permissions.AllowAny',),
     },
 }
-
-if DEBUG:
-    REST_FRAMEWORK["DEFAULT_AUTHENTICATION_CLASSES"] += (
-        "rest_framework.authentication.BasicAuthentication",
-    )
