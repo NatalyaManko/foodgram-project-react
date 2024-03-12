@@ -1,5 +1,5 @@
 from django.contrib import admin
-
+from django.views.decorators.csrf import csrf_exempt
 from .models import (Favorite,
                      Ingredient,
                      Recipe,
@@ -9,6 +9,7 @@ from .models import (Favorite,
                      Tag)
 
 
+@csrf_exempt
 class IngredientAdmin(admin.ModelAdmin):
 
     list_display = ('id', 'name', 'measurement_unit',)
@@ -17,6 +18,7 @@ class IngredientAdmin(admin.ModelAdmin):
     list_filter = ('name',)
 
 
+@csrf_exempt
 class TagAdmin(admin.ModelAdmin):
 
     list_display = ('id', 'name', 'slug', 'color',)
@@ -35,6 +37,7 @@ class RecipeTagInline(admin.StackedInline):
     extra = 0
 
 
+@csrf_exempt
 class RecipeAdmin(admin.ModelAdmin):
     inlines = (RecipeIngredientInline,
                RecipeTagInline,)
