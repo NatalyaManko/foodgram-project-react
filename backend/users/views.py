@@ -29,7 +29,6 @@ class CustomUserViewSet(UserViewSet):
     @action(
         methods=['get'],
         detail=False,
-        url_path='me',
         permission_classes=[permissions.IsAuthenticated],
         pagination_class=None
     )
@@ -41,7 +40,6 @@ class CustomUserViewSet(UserViewSet):
     @action(
         methods=['post'],
         detail=False,
-        url_path='set_password',
         permission_classes=[permissions.IsAuthenticated],
         pagination_class=None
     )
@@ -58,6 +56,7 @@ class CustomUserViewSet(UserViewSet):
                 {'Пароль успешно изменен!'},
                 status=status.HTTP_204_NO_CONTENT
             )
+        return Response(serializer.errors, status=status.HTTP_401_UNAUTHORIZED)
 
     @action(
         methods=['post', 'delete'],

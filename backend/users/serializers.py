@@ -78,8 +78,6 @@ class PasswordChangeSerializer(serializers.ModelSerializer):
             'last_name': {'required': True, 'allow_blank': False},
         }
 
-    current_password = serializers.CharField(required=False)
-
     def update(self, instance, validated_data):
 
         request = self.context['request']
