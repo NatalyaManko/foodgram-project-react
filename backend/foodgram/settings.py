@@ -11,7 +11,7 @@ SECRET_KEY = os.getenv('SECRET_KEY', 'key')
 
 DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1', 'localhost', 'https://gurman.myftp.biz']
+ALLOWED_HOSTS = ['158.160.79.149', '127.0.0.1', 'localhost', 'gurman.myftp.biz']
 
 CSRF_TRUSTED_ORIGINS = ['https://gurman.myftp.biz']
 CORS_ORIGIN_WHITELIST = ['http://localhost:3000']
