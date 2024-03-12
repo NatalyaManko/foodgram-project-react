@@ -9,7 +9,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = os.getenv('SECRET_KEY', 'key')
 
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['158.160.79.149', '127.0.0.1', 'localhost', 'gurman.myftp.biz']
 
@@ -172,8 +172,3 @@ DJOSER = {
         'user': ('rest_framework.permissions.AllowAny',),
     },
 }
-
-if DEBUG:
-    CSRF_TRUSTED_ORIGINS = ['http://*', 'https://*']
-else:
-    CSRF_TRUSTED_ORIGINS = ['http://*.gurman.myftp.biz', 'https://*.gurman.myftp.biz']
