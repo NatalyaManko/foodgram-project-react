@@ -15,6 +15,7 @@ class UserAdmin(admin.ModelAdmin):
                     'password',
                     'is_staff',
                     'is_active',
+                    'groups',
                     'is_superuser')
     list_editable = ('username',
                      'email',
@@ -23,7 +24,7 @@ class UserAdmin(admin.ModelAdmin):
                      'password',
                      'is_staff',
                      'is_active',
-                     'group',)
+                     'groups',)
     search_fields = ('last_name',)
     list_display_links = None
 
