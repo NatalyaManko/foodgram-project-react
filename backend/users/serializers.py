@@ -68,8 +68,8 @@ class UserCreateSerializer(BaseUserRegistration):
 class PasswordChangeSerializer(serializers.ModelSerializer):
     """Изменение пароля"""
 
-    new_password = serializers.CharField()
-    current_password = serializers.CharField()
+    new_password = serializers.CharField(required=True)
+    current_password = serializers.CharField(required=True)
 
     def validate_current_password(self, current_password):
         user = self.context['reguest'].user
