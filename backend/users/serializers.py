@@ -65,49 +65,6 @@ class UserCreateSerializer(BaseUserRegistration):
         return data
 
 
-class PasswordChangeSerializer(serializers.Serializer):
-    """Изменение пароля"""
-
-    new_password = serializers.CharField(required=True)
-    current_password = serializers.CharField(required=True)
-
-    def validate(self, data):
-        user = self.context['request'].user
-        user_password = user.password
-        if not authenticate(email=user.email,
-                            password=data.get('current_password')):
-            raise ValidationError(
-                {'authorization': 'Пройдите авторизацию!'}
-            )
-        if not check_password(
-            'current_password', user_password
-        ):
-            raise ValidationError(
-                {'current_password': 'Неправильный текущий пароль!'}
-            )
-        if data.get['current_password'] == data.get['new_password']:
-            raise ValidationError(
-                {'new_password': 'Новый пароль должен отличаться от текущего!'}
-            )
-        return data
-
-    def update(self, validated_data):
-        user = self.context['request'].user
-        password = make_password(validated_data.get('new_password'))
-        user.password = password
-        user.save()
-        return validated_data
-
-    def validate(self, obj):
-        try:
-            validate_password(obj['new_password'])
-        except exceptions.ValidationError as err:
-            raise ValidationError(
-                {'new_password': list(err.messages)}
-            )
-        return super().validate(obj)
-
-
 class FollowSerializer(serializers.ModelSerializer):
     """Подписка пользователя"""
 

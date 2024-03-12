@@ -41,27 +41,19 @@ class CustomUserViewSet(UserViewSet):
     @action(
         methods=['post'],
         detail=False,
-        url_path='set_password',
         permission_classes=[permissions.IsAuthenticated],
         pagination_class=None
     )
-    def password_change(self, request):
-        """Смена пароля"""
-        serializer = PasswordChangeSerializer(
-            request.user,
-            data=request.data,
-            context={'request': request}
-        )
+    def set_password(self, request):
+        view = UserViewSet.as_view({"post": "set_password"})
+        return view(request._request)
+
+    def create(self, request, *args, **kwargs):
+        serializer = UserCreateSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
-            return Response(
-                {'Пароль успешно изменен!'},
-                status=status.HTTP_204_NO_CONTENT
-            )
-        return Response(
-            {'errors': 'Введены неверные данные!'},
-            status=status.HTTP_400_BAD_REQUEST
-        )
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     @action(
         methods=['post', 'delete'],
