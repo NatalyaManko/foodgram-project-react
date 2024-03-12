@@ -1,4 +1,7 @@
 import api.serializers
+from django.contrib.auth.hashers import check_password
+from django.contrib.auth.password_validation import validate_password
+from django.core import exceptions
 from djoser.serializers import UserCreateSerializer as BaseUserRegistration
 from djoser.serializers import UserSerializer
 from rest_framework import serializers, status
@@ -59,6 +62,49 @@ class UserCreateSerializer(BaseUserRegistration):
                 f'Использовать "{name}" нельзя. Выберите другое имя!'
             )
         return data
+
+
+class PasswordChangeSerializer(serializers.ModelSerializer):
+    """Изменение пароля"""
+
+    new_password = serializers.CharField(required=True)
+    current_password = serializers.CharField(required=True)
+
+    class Meta:
+        model = User
+        fields = ('new_password', 'current_password',)
+        extra_kwargs = {
+            'first_name': {'required': True, 'allow_blank': False},
+            'last_name': {'required': True, 'allow_blank': False},
+        }
+
+    def update(self, instance, validated_data):
+
+        request = self.context['request']
+        user_password = request.user.password
+        if not check_password(
+            validated_data['current_password'], user_password
+        ):
+            raise ValidationError(
+                {'current_password': 'Неправильный текущий пароль!'}
+            )
+        if (validated_data['current_password']
+           == validated_data['new_password']):
+            raise ValidationError(
+                {'new_password': 'Новый пароль должен отличаться от текущего!'}
+            )
+        instance.set_password(validated_data['new_password'])
+        instance.save()
+        return validated_data
+
+    def validate(self, obj):
+        try:
+            validate_password(obj['new_password'])
+        except exceptions.ValidationError as err:
+            raise ValidationError(
+                {'new_password': list(err.messages)}
+            )
+        return super().validate(obj)
 
 
 class FollowSerializer(serializers.ModelSerializer):
