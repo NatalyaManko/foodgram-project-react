@@ -172,3 +172,8 @@ DJOSER = {
         'user': ('rest_framework.permissions.AllowAny',),
     },
 }
+
+if DEBUG:
+    CSRF_TRUSTED_ORIGINS = ['http://*', 'https://*']
+else:
+    CSRF_TRUSTED_ORIGINS = ['http://*.gurman.myftp.biz', 'https://*.gurman.myftp.biz']
