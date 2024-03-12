@@ -65,7 +65,7 @@ class UserCreateSerializer(BaseUserRegistration):
         return data
 
 
-class PasswordChangeSerializer(serializers.ModelSerializer):
+class PasswordChangeSerializer(serializers.Serializer):
     """Изменение пароля"""
 
     new_password = serializers.CharField(required=True)
