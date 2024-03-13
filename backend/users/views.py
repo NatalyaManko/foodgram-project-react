@@ -58,8 +58,7 @@ class CustomUserViewSet(UserViewSet):
         methods=['post', 'delete'],
         detail=True,
         url_path='subscribe',
-        permission_classes=[permissions.IsAuthenticated],
-        pagination_class=None
+        permission_classes=[permissions.IsAuthenticated]
     )
     def subscribe(self, request, *args, **kwargs):
         """Создание и удаление подписки"""
@@ -74,7 +73,7 @@ class CustomUserViewSet(UserViewSet):
                 data=request.data,
                 context={'request': request, 'following': following}
             )
-            if serializer.is_valid(raise_exception=True):
+            if serializer.is_valid():
                 serializer.save(following=following, follower=follower)
                 return Response(serializer.data,
                                 status=status.HTTP_201_CREATED)
