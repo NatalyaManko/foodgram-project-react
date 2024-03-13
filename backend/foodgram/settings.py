@@ -17,6 +17,8 @@ CSRF_TRUSTED_ORIGINS = ['https://gurman.myftp.biz']
 
 CSRF_COOKIE_DOMAIN = ['gurman.myftp.biz']
 
+CSRF_USE_SESSIONS = True
+
 CORS_ORIGIN_WHITELIST = ['http://localhost:3000']
 
 CORS_URLS_REGEX = r'^/api/.*$'
