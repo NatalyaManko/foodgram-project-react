@@ -7,6 +7,7 @@ from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.response import Response
 
 from .models import Follow, User
+from .paginations import LimitPagePaginator
 from .serializers import (FollowSerializer,
                           UserCreateSerializer,
                           UserSerializer)
@@ -58,7 +59,8 @@ class CustomUserViewSet(UserViewSet):
         methods=['post', 'delete'],
         detail=True,
         url_path='subscribe',
-        permission_classes=[permissions.IsAuthenticated]
+        permission_classes=[permissions.IsAuthenticated],
+        pagination_class=LimitPagePaginator
     )
     def subscribe(self, request, *args, **kwargs):
         """Создание и удаление подписки"""
@@ -86,6 +88,13 @@ class CustomUserViewSet(UserViewSet):
             {'errors': 'Вы не подписаны на этого пользователя!'},
             status=status.HTTP_400_BAD_REQUEST
         )
+
+    def page_subscribe(self, request):
+        queryset = User.objects.filter(follow_user=request.user)
+        page = self.paginate_queryset(queryset)
+        serializer = FollowSerializer(page, many=True,
+                                      context={'request': request})
+        return self.get_paginated_response(serializer.data)
 
     @action(
         methods=['get'],

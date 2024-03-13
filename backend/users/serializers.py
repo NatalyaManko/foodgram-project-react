@@ -1,4 +1,3 @@
-import api.serializers
 from djoser.serializers import UserCreateSerializer as BaseUserRegistration
 from djoser.serializers import UserSerializer
 from rest_framework import serializers
@@ -99,14 +98,6 @@ class FollowSerializer(serializers.ModelSerializer):
             raise ValidationError(
                 'Вы не можете подписаться на себя!')
         return value
-
-    def get_recipes(self, obj):
-        request = self.context.get('request')
-        recipes_limit = request.query_params.get('limit')
-        recipes = Recipe.objects.filter(author=obj.following)
-        if recipes_limit:
-            recipes = recipes[:int(recipes_limit)]
-        return api.serializers.RecipeSerializer(recipes, many=True).data
 
     def get_is_subscribed(self, obj):
         follower = self.context.get('request').user
