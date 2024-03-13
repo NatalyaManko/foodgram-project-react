@@ -71,9 +71,7 @@ class CustomUserViewSet(UserViewSet):
         if request.method == 'POST':
             serializer = FollowSerializer(
                 data=request.data,
-                context={'request': request,
-                         'following': following,
-                         'follower': 'follower'}
+                context={'request': request, 'following': following}
             )
             if serializer.is_valid():
                 serializer.save(following=following, follower=follower)
