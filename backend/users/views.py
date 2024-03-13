@@ -69,7 +69,7 @@ class CustomUserViewSet(UserViewSet):
         except ObjectDoesNotExist:
             return Response({'errors': 'Объект не найден!'},
                             status=status.HTTP_404_NOT_FOUND)
-        if request.method == 'POST': 
+        if request.method == 'POST':
             serializer = FollowSerializer(
                 data=request.data,
                 context={'request': request, 'following': following}
