@@ -362,10 +362,10 @@ class FavoriteSerializer(serializers.ModelSerializer):
 
     def validate(self, data):
         recipe = self.context.get('recipe')
-        user = self.context.get('request').user
+        follower = self.context.get('request').user
         if Favorite.objects.filter(
                 recipe=recipe,
-                user=user).exists():
+                follower=follower).exists():
             raise serializers.ValidationError(
                 {'errors': 'Вы уже добавили этот рецепт в избранное!'},
                 code=status.HTTP_400_BAD_REQUEST
