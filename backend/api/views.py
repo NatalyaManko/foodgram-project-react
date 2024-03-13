@@ -69,9 +69,13 @@ class RecipeViewSet(viewsets.ModelViewSet):
             return RecipeGetSerializer
         return RecipeCreateSerializer
 
-    def perform_create(self, **kwargs):
+    def get_queryset(self, request, *args, **kwargs):
+        ingredient = Ingredient.objects.get(id=self.kwargs.get('pk'))
         try:
-            Ingredient.objects.get(id=self.kwargs.get('pk'))
+            serializer = RecipeCreateSerializer(ingredient,
+                                                context={'request': request})
+            return Response(serializer.data,
+                            status=status.HTTP_201_CREATED)
         except ObjectDoesNotExist:
             return Response({'errors': 'Ингредиент не существует!'},
                             status=status.HTTP_400_BAD_REQUEST)
