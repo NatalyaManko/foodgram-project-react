@@ -92,13 +92,13 @@ class FollowSerializer(serializers.ModelSerializer):
                 follower=follower).exists():
             raise ValidationError(
                 {'errors': 'Вы уже подписаны на этого пользователя!'},
-                code=status.HTTP_400_BAD_REQUEST
             )
-        if follower == following:
+    
+    def validate_following(self, value):
+        if self.context['request'].user == value:
             raise ValidationError(
-                {'errors': 'Вы не можете подписаться на себя!'},
-                code=status.HTTP_400_BAD_REQUEST)
-        return data
+                'Вы не можете подписаться на себя!')
+        return value
 
     def get_recipes(self, obj):
         request = self.context.get('request')
