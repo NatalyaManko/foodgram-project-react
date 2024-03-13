@@ -64,13 +64,12 @@ class CustomUserViewSet(UserViewSet):
     def subscribe(self, request, *args, **kwargs):
         """Создание и удаление подписки"""
         follower = self.request.user
-        
         if request.method == 'POST':
             try:
                 following = User.objects.get(id=self.kwargs.get('id'))
             except ObjectDoesNotExist:
                 return Response({'errors': 'Объект не найден!'},
-                            status=status.HTTP_404_NOT_FOUND)
+                                status=status.HTTP_404_NOT_FOUND)
             serializer = FollowSerializer(
                 data=request.data,
                 context={'request': request, 'following': following}
@@ -84,7 +83,7 @@ class CustomUserViewSet(UserViewSet):
                 following = User.objects.get(id=self.kwargs.get('id'))
             except ObjectDoesNotExist:
                 return Response({'errors': 'Объект не найден!'},
-                            status=status.HTTP_404_NOT_FOUND)
+                                status=status.HTTP_404_NOT_FOUND)
             if Follow.objects.filter(following=following,
                                      follower=follower).exists():
                 Follow.objects.get(following=following).delete()
