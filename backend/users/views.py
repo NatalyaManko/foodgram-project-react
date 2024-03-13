@@ -1,5 +1,5 @@
 from api.permissions import IsAuthorPermission
-from django.core.exceptions import ObjectDoesNotExist
+from django.shortcuts import get_object_or_404
 from djoser.views import UserViewSet
 from rest_framework import permissions, status
 from rest_framework.decorators import action
@@ -63,12 +63,8 @@ class CustomUserViewSet(UserViewSet):
     )
     def subscribe(self, request, *args, **kwargs):
         """Создание и удаление подписки"""
+        following = get_object_or_404(User, id=self.kwargs.get('pk'))
         follower = self.request.user
-        try:
-            following = User.objects.get(id=self.kwargs.get('pk'))
-        except ObjectDoesNotExist:
-            return Response({'errors': 'Объект не найден!'},
-                            status=status.HTTP_404_NOT_FOUND)
         if request.method == 'POST':
             serializer = FollowSerializer(
                 data=request.data,
@@ -78,17 +74,17 @@ class CustomUserViewSet(UserViewSet):
                 serializer.save(following=following, follower=follower)
                 return Response(serializer.data,
                                 status=status.HTTP_201_CREATED)
-        if request.method == 'DELETE':
-            if Follow.objects.filter(following=following,
-                                     follower=follower).exists():
-                Follow.objects.get(following=following).delete()
-                return Response('Успешная отписка',
-                                status=status.HTTP_204_NO_CONTENT)
-            else:
-                return Response(
-                    {'errors': 'Вы не подписаны на этого пользователя!'},
-                    status=status.HTTP_400_BAD_REQUEST
-                )
+            return Response({'errors': 'Вы уже подписаны на этого автора!'},
+                            status=status.HTTP_400_BAD_REQUEST)
+        if Follow.objects.filter(following=following,
+                                 follower=follower).exists():
+            Follow.objects.get(following=following).delete()
+            return Response('Успешная отписка',
+                            status=status.HTTP_204_NO_CONTENT)
+        return Response(
+            {'errors': 'Вы не подписаны на этого автора!'},
+            status=status.HTTP_400_BAD_REQUEST
+        )
 
     @action(
         methods=['get'],
