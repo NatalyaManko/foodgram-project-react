@@ -1,7 +1,7 @@
 import api.serializers
 from djoser.serializers import UserCreateSerializer as BaseUserRegistration
 from djoser.serializers import UserSerializer
-from rest_framework import serializers, status
+from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 
 from recipes.models import Recipe
@@ -93,7 +93,7 @@ class FollowSerializer(serializers.ModelSerializer):
             raise ValidationError(
                 {'errors': 'Вы уже подписаны на этого пользователя!'},
             )
-    
+
     def validate_following(self, value):
         if self.context['request'].user == value:
             raise ValidationError(
