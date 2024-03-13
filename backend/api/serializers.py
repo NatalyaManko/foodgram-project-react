@@ -94,7 +94,7 @@ class RecipeIngredientSerializer(serializers.ModelSerializer):
 class AddRecipeIngredientSerializer(serializers.ModelSerializer):
     """Ингредиенты с количеством для создания рецепта """
 
-    id = serializers.IntegerField()
+    id = serializers.PrimaryKeyRelatedField()
     amount = serializers.IntegerField(
         validators=[
             MinValueValidator(
@@ -263,7 +263,7 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
         return super().update(instance, validated_data)
 
     def to_representation(self, instance):
-        serializer = RecipeSerializer(
+        serializer = RecipeGetSerializer(
             instance,
             context={'request': self.context.get('request')}
         )
