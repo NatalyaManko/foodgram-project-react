@@ -137,7 +137,6 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
     tags = serializers.PrimaryKeyRelatedField(
         queryset=Tag.objects.all(),
         many=True,
-        read_only=True
     )
     image = Base64ImageField()
     cooking_time = serializers.IntegerField(
@@ -264,13 +263,11 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
         return super().update(instance, validated_data)
 
     def to_representation(self, instance):
-
-        display = super().to_representation(instance)
-        display['ingredients'] = RecipeIngredientSerializer(
-            instance.recipes_ingredients.all(), many=True).data
-        display['tags'] = RecipeTagSerializer(
-            instance.recipes_tags.all(), many=True).data
-        return display
+        serializer = RecipeSerializer(
+            instance,
+            context={'request': self.context.get('request')}
+        )
+        return serializer.data
 
     def get_is_favorited(self, obj):
         user = self.context.get('request').user
