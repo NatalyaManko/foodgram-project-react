@@ -64,12 +64,12 @@ class CustomUserViewSet(UserViewSet):
     def subscribe(self, request, *args, **kwargs):
         """Создание и удаление подписки"""
         follower = self.request.user
-        if request.method == 'POST':
-            try:
-                following = User.objects.get(id=self.kwargs.get('id'))
-            except ObjectDoesNotExist:
-                return Response({'errors': 'Объект не найден!'},
-                                status=status.HTTP_404_NOT_FOUND)
+        try:
+            following = User.objects.get(id=self.kwargs.get('pk'))
+        except ObjectDoesNotExist:
+            return Response({'errors': 'Объект не найден!'},
+                            status=status.HTTP_404_NOT_FOUND)
+        if request.method == 'POST': 
             serializer = FollowSerializer(
                 data=request.data,
                 context={'request': request, 'following': following}
@@ -79,21 +79,16 @@ class CustomUserViewSet(UserViewSet):
                 return Response(serializer.data,
                                 status=status.HTTP_201_CREATED)
         if request.method == 'DELETE':
-            try:
-                following = User.objects.get(id=self.kwargs.get('id'))
-            except ObjectDoesNotExist:
-                return Response({'errors': 'Объект не найден!'},
-                                status=status.HTTP_404_NOT_FOUND)
-        if Follow.objects.filter(following=following,
-                                 follower=follower).exists():
-            Follow.objects.get(following=following).delete()
-            return Response('Успешная отписка',
-                            status=status.HTTP_204_NO_CONTENT)
-        else:
-            return Response(
-                {'errors': 'Вы не подписаны на этого пользователя!'},
-                status=status.HTTP_400_BAD_REQUEST
-            )
+            if Follow.objects.filter(following=following,
+                                     follower=follower).exists():
+                Follow.objects.get(following=following).delete()
+                return Response('Успешная отписка',
+                                status=status.HTTP_204_NO_CONTENT)
+            else:
+                return Response(
+                    {'errors': 'Вы не подписаны на этого пользователя!'},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
 
     @action(
         methods=['get'],
