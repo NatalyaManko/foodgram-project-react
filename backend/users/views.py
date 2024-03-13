@@ -63,12 +63,12 @@ class CustomUserViewSet(UserViewSet):
     )
     def subscribe(self, request, *args, **kwargs):
         """Создание и удаление подписки"""
+        follower = self.request.user
         try:
             following = User.objects.get(id=self.kwargs.get('id'))
         except ObjectDoesNotExist:
             return Response({'errors': 'Объект не найден!'},
                             status=status.HTTP_404_NOT_FOUND)
-        follower = self.request.user
         if request.method == 'POST':
             serializer = FollowSerializer(
                 data=request.data,
@@ -78,16 +78,17 @@ class CustomUserViewSet(UserViewSet):
                 serializer.save(following=following, follower=follower)
                 return Response(serializer.data,
                                 status=status.HTTP_201_CREATED)
-        if Follow.objects.filter(following=following,
-                                 follower=follower).exists():
-            Follow.objects.get(following=following).delete()
-            return Response('Успешная отписка',
-                            status=status.HTTP_204_NO_CONTENT)
-        else:
-            return Response(
-                {'errors': 'Вы не подписаны на этого пользователя!'},
-                status=status.HTTP_400_BAD_REQUEST
-            )
+        if request.method == 'DELETE':
+            if Follow.objects.filter(following=following,
+                                     follower=follower).exists():
+                Follow.objects.get(following=following).delete()
+                return Response('Успешная отписка',
+                                status=status.HTTP_204_NO_CONTENT)
+            else:
+                return Response(
+                    {'errors': 'Вы не подписаны на этого пользователя!'},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
 
     @action(
         methods=['get'],
