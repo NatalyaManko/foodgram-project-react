@@ -13,6 +13,7 @@ from .serializers import (FollowSerializer,
                           UserSerializer)
 
 
+# eto staraya versia
 class CustomUserViewSet(UserViewSet):
     """ViewSet пользователя"""
     queryset = User.objects.all()
