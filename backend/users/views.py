@@ -13,14 +13,11 @@ from .serializers import (FollowSerializer,
                           UserSerializer)
 
 
-# eto staraya versia
 class CustomUserViewSet(UserViewSet):
     """ViewSet пользователя"""
     queryset = User.objects.all()
     pagination_class = LimitOffsetPagination
-    permission_classes = (permissions.AllowAny,
-                          IsAuthorPermission,
-                          )
+    permission_classes = (permissions.AllowAny, IsAuthorPermission)
 
     def get_serializer_class(self):
         if self.action in ('list', 'retrieve'):
@@ -36,7 +33,7 @@ class CustomUserViewSet(UserViewSet):
     )
     def current_me(self, request):
         """Просмотр страницы текущего пользователя"""
-        serializer = UserSerializer(request.user,)
+        serializer = UserSerializer(request.user)
         return Response(serializer.data, status.HTTP_200_OK)
 
     @action(
@@ -46,8 +43,7 @@ class CustomUserViewSet(UserViewSet):
         pagination_class=None
     )
     def set_password(self, request):
-        view = UserViewSet.as_view({"post": "set_password"})
-        return view(request._request)
+        return UserViewSet.as_view({"post": "set_password"})(request._request)
 
     def create(self, request, *args, **kwargs):
         serializer = UserCreateSerializer(data=request.data)
@@ -82,7 +78,8 @@ class CustomUserViewSet(UserViewSet):
                                 status=status.HTTP_201_CREATED)
         if Follow.objects.filter(following=following,
                                  follower=follower).exists():
-            Follow.objects.get(following=following).delete()
+            Follow.objects.get(following=following,
+                               follower=follower).delete()
             return Response('Успешная отписка',
                             status=status.HTTP_204_NO_CONTENT)
         return Response(
@@ -91,7 +88,7 @@ class CustomUserViewSet(UserViewSet):
         )
 
     def page_subscribe(self, request):
-        queryset = User.objects.filter(follow_user=request.user)
+        queryset = User.objects.filter(follows_user=request.user)
         page = self.paginate_queryset(queryset)
         serializer = FollowSerializer(page, many=True,
                                       context={'request': request})
