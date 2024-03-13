@@ -5,6 +5,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.core.files.base import ContentFile
 from django.core.validators import MinValueValidator
 from rest_framework import serializers, status
+from rest_framework.exceptions import ValidationError
 from rest_framework.relations import PrimaryKeyRelatedField
 
 from recipes.models import (Favorite,
@@ -235,7 +236,7 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
                     id=ingredient['id']
                 )
             except ObjectDoesNotExist:
-                raise serializers.ValidationError(
+                raise ValidationError(
                     {'detail': 'Такой ингредиент не существует!'}
                 )
             RecipeIngredient.objects.create(

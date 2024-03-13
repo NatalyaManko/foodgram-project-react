@@ -69,17 +69,6 @@ class RecipeViewSet(viewsets.ModelViewSet):
             return RecipeGetSerializer
         return RecipeCreateSerializer
 
-    def get_queryset(self, request, *args, **kwargs):
-        ingredient = Ingredient.objects.get(id=self.kwargs.get('pk'))
-        try:
-            serializer = RecipeCreateSerializer(ingredient,
-                                                context={'request': request})
-            return Response(serializer.data,
-                            status=status.HTTP_201_CREATED)
-        except ObjectDoesNotExist:
-            return Response({'errors': 'Ингредиент не существует!'},
-                            status=status.HTTP_400_BAD_REQUEST)
-
     def perform_update(self, serializer, **kwargs):
         user = self.request.user
         if Recipe.objects.get(id=self.kwargs.get('pk')).author != user:
