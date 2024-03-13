@@ -94,7 +94,7 @@ class RecipeIngredientSerializer(serializers.ModelSerializer):
 class AddRecipeIngredientSerializer(serializers.ModelSerializer):
     """Ингредиенты с количеством для создания рецепта """
 
-    id = serializers.PrimaryKeyRelatedField()
+    id = serializers.PrimaryKeyRelatedField(read_only=True)
     amount = serializers.IntegerField(
         validators=[
             MinValueValidator(
