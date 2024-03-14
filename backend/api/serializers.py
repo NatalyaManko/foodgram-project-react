@@ -6,7 +6,8 @@ from django.core.files.base import ContentFile
 from django.core.validators import MinValueValidator
 from rest_framework import serializers, status
 from rest_framework.exceptions import ValidationError
-from rest_framework.relations import PrimaryKeyRelatedField
+from rest_framework.relations import (PrimaryKeyRelatedField,
+                                      StringRelatedField)
 
 from recipes.models import (Favorite,
                             Ingredient,
@@ -94,7 +95,7 @@ class RecipeIngredientSerializer(serializers.ModelSerializer):
 class AddRecipeIngredientSerializer(serializers.ModelSerializer):
     """Ингредиенты с количеством для создания рецепта """
 
-    id = serializers.PrimaryKeyRelatedField(read_only=True)
+    id = serializers.IntegerField()
     amount = serializers.IntegerField(
         validators=[
             MinValueValidator(
@@ -129,7 +130,7 @@ class RecipeSerializer(serializers.ModelSerializer):
 class RecipeCreateSerializer(serializers.ModelSerializer):
     """Создание Рецептов"""
 
-    author = UserSerializer(read_only=True)
+    author = StringRelatedField(read_only=True)
     ingredients = AddRecipeIngredientSerializer(
         source='recipes_ingredients',
         many=True
@@ -263,11 +264,12 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
         return super().update(instance, validated_data)
 
     def to_representation(self, instance):
-        serializer = RecipeGetSerializer(
-            instance,
-            context={'request': self.context.get('request')}
-        )
-        return serializer.data
+        display = super().to_representation(instance)
+        display['ingredients'] = RecipeIngredientSerializer(
+            instance.recipes_ingredients.all(), many=True).data
+        display['tags'] = RecipeTagSerializer(
+            instance.recipes_tags.all(), many=True).data
+        return display
 
     def get_is_favorited(self, obj):
         user = self.context.get('request').user
