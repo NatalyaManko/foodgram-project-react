@@ -153,8 +153,8 @@ class ShoppingCart(models.Model):
                              verbose_name='Пользователь',
                              related_name='shopping_cart')
     recipe = models.ManyToManyField(Recipe,
-                               verbose_name='Список покупок',
-                               related_name='shopping_cart')
+                                   verbose_name='Список покупок',
+                                   related_name='shopping_cart')
 
     class Meta:
         constraints = [
