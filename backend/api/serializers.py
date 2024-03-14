@@ -347,6 +347,18 @@ class ShoppingCartSerializer(serializers.ModelSerializer):
         model = ShoppingCart
         fields = ('id', 'name', 'image', 'cooking_time',)
 
+    def validate(self, data):
+        user = self.context.get('request').user
+        recipe_pk = self.context.get('pk')
+        if ShoppingCart.objects.filter(
+                recipe=recipe_pk,
+                user=user).exists():
+            raise serializers.ValidationError(
+                {'errors': 'Вы уже добавили этот рецепт в список покупок!'},
+                code=status.HTTP_400_BAD_REQUEST
+            )
+        return data
+
 
 class FavoriteSerializer(serializers.ModelSerializer):
     """Сериализатор Избранного"""
@@ -362,11 +374,11 @@ class FavoriteSerializer(serializers.ModelSerializer):
         fields = ('id', 'name', 'image', 'cooking_time',)
 
     def validate(self, data):
-        follower = self.context.get('request').user
+        user = self.context.get('request').user
         recipe_pk = self.context.get('pk')
         if Favorite.objects.filter(
                 recipe=recipe_pk,
-                follower=follower).exists():
+                user=user).exists():
             raise serializers.ValidationError(
                 {'errors': 'Вы уже добавили этот рецепт в избранное!'},
                 code=status.HTTP_400_BAD_REQUEST
