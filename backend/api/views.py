@@ -184,7 +184,10 @@ class RecipeViewSet(viewsets.ModelViewSet):
                                 status=status.HTTP_400_BAD_REQUEST)
             serializer = FavoriteSerializer(
                 data=request.data,
-                context={'request': request, 'recipe': recipe})
+                context={'request': request,
+                         'recipe': recipe,
+                         'pk': self.kwargs.get('pk')}
+            )
             if serializer.is_valid(raise_exception=True):
                 serializer.save(user=user, recipe=recipe)
                 return Response(serializer.data,

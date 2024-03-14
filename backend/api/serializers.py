@@ -362,10 +362,10 @@ class FavoriteSerializer(serializers.ModelSerializer):
         fields = ('id', 'name', 'image', 'cooking_time',)
 
     def validate(self, data):
-        recipe = self.context.get('recipe')
         follower = self.context.get('request').user
+        recipe_pk = self.context.get('pk')
         if Favorite.objects.filter(
-                recipe=recipe,
+                recipe=recipe_pk,
                 follower=follower).exists():
             raise serializers.ValidationError(
                 {'errors': 'Вы уже добавили этот рецепт в избранное!'},
