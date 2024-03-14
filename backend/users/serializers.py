@@ -1,3 +1,4 @@
+import api.serializers
 from djoser.serializers import UserCreateSerializer as BaseUserRegistration
 from djoser.serializers import UserSerializer
 from rest_framework import serializers
@@ -112,6 +113,14 @@ class FollowSerializer(serializers.ModelSerializer):
                 follower=obj.following,
                 following=obj.follower).exists()
         return False
+
+    def get_recipes(self, obj):
+        request = self.context.get('request')
+        limit = request.GET.get('recipes_limit')
+        recipes = Recipe.objects.filter(author=obj.author)
+        if limit and limit.isdigit():
+            recipes = recipes[:int(limit)]
+        return api.serializers.RecipeSerializer(recipes, many=True).data
 
     def get_recipes_count(self, obj):
         return Recipe.objects.filter(author=obj.following).count()

@@ -100,42 +100,37 @@ class RecipeViewSet(viewsets.ModelViewSet):
         из списка покупок у текущего пользоватля.
         """
         user = self.request.user
+        try:
+            recipe = Recipe.objects.get(id=self.kwargs.get('pk'))
+        except ObjectDoesNotExist:
+            return Response({'errors': 'Рецепт не найден!'},
+                            status=status.HTTP_404_NOT_FOUND)
+
         if request.method == 'POST':
-            try:
-                recipe = Recipe.objects.get(id=self.kwargs.get('pk'))
-            except ObjectDoesNotExist:
-                return Response({'errors': 'Рецепт не найден!'},
-                                status=status.HTTP_400_BAD_REQUEST)
-            if ShoppingCart.objects.filter(user=user,
-                                           recipe=recipe).exists():
+            if ShoppingCart.objects.filter(user=user, recipe=recipe).exists():
                 return Response(
                     {'errors': 'Рецепт уже добавлен в список покупок!'},
                     status=status.HTTP_400_BAD_REQUEST
                 )
             serializer = ShoppingCartSerializer(
-                data=request.data,
-                context={'request': request, 'recipe': recipe})
+                data={'recipe': recipe.id},
+                context={'request': request}
+            )
             if serializer.is_valid(raise_exception=True):
-                serializer.save(user=user, recipe=recipe)
+                serializer.save(user=user)
                 return Response(serializer.data,
                                 status=status.HTTP_201_CREATED)
         elif request.method == 'DELETE':
             try:
-                recipe = Recipe.objects.get(id=self.kwargs.get('pk'))
+                cart_item = ShoppingCart.objects.get(user=user, recipe=recipe)
             except ObjectDoesNotExist:
-                return Response({'errors': 'Рецепт не найден!'},
-                                status=status.HTTP_404_NOT_FOUND)
-        if ShoppingCart.objects.filter(user=user,
-                                       recipe=recipe).exists():
-            ShoppingCart.objects.get(recipe=recipe).delete()
+                return Response(
+                    {'errors': 'Рецепт не был добавлен в список покупок!'},
+                    status=status.HTTP_400_BAD_REQUEST)
+            cart_item.delete()
             return Response(
-                {'errors': 'Рецепт успешно удален из списка покупок!'},
+                {'message': 'Рецепт успешно удален из списка покупок!'},
                 status=status.HTTP_204_NO_CONTENT
-            )
-        else:
-            return Response(
-                {'errors': 'Рецепт не был добавлен в список покупок!'},
-                status=status.HTTP_400_BAD_REQUEST
             )
 
     @action(methods=['get'],
