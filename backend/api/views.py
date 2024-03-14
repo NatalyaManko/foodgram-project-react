@@ -172,42 +172,27 @@ class RecipeViewSet(viewsets.ModelViewSet):
         из избранного текущего пользоватля.
         """
         user = self.request.user
+        try:
+            recipe = Recipe.objects.get(id=self.kwargs.get('pk'))
+        except Recipe.DoesNotExist:
+            return Response({'errors': 'Рецепт не найден!'},
+                            status=status.HTTP_404_NOT_FOUND)
+
         if request.method == 'POST':
-            try:
-                recipe = Recipe.objects.get(id=self.kwargs.get('pk'))
-            except ObjectDoesNotExist:
-                return Response({'errors': 'Объект не найден!'},
-                                status=status.HTTP_400_BAD_REQUEST)
-            if Favorite.objects.filter(user=user,
-                                       recipe=recipe).exists():
+            if Favorite.objects.filter(user=user, recipe=recipe).exists():
                 return Response({'errors': 'Рецепт уже добавлен в избранное!'},
                                 status=status.HTTP_400_BAD_REQUEST)
-            serializer = FavoriteSerializer(
-                data=request.data,
-                context={'request': request,
-                         'recipe': recipe,
-                         'pk': self.kwargs.get('pk')}
-            )
+            serializer = FavoriteSerializer(data=request.data,
+                                            context={'request': request, 'recipe': recipe})
             if serializer.is_valid(raise_exception=True):
                 serializer.save(user=user, recipe=recipe)
-                return Response(serializer.data,
-                                status=status.HTTP_201_CREATED)
+                return Response(serializer.data, status=status.HTTP_201_CREATED)
         elif request.method == 'DELETE':
-            try:
-                recipe = Recipe.objects.get(id=self.kwargs.get('pk'))
-            except ObjectDoesNotExist:
-                return Response({'errors': 'Рецепт не найден!'},
-                                status=status.HTTP_404_NOT_FOUND)
-
-        if Favorite.objects.filter(user=user,
-                                   recipe=recipe).exists():
-            Favorite.objects.get(recipe=recipe).delete()
-            return Response(
-                {'errors': 'Рецепт успешно удален из избранного!'},
-                status=status.HTTP_204_NO_CONTENT
-            )
-        else:
-            return Response(
-                {'errors': 'Рецепт не был добавлен в избранное!'},
-                status=status.HTTP_400_BAD_REQUEST
-            )
+            favorite_instance = Favorite.objects.filter(user=user, recipe=recipe).first()
+            if favorite_instance:
+                favorite_instance.delete()
+                return Response({'message': 'Рецепт успешно удален из избранного!'},
+                                status=status.HTTP_204_NO_CONTENT)
+            else:
+                return Response({'errors': 'Рецепт не был добавлен в избранное!'},
+                                status=status.HTTP_400_BAD_REQUEST)
