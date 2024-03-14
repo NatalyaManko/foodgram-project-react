@@ -6,8 +6,7 @@ from django.core.files.base import ContentFile
 from django.core.validators import MinValueValidator
 from rest_framework import serializers, status
 from rest_framework.exceptions import ValidationError
-from rest_framework.relations import (PrimaryKeyRelatedField,
-                                      StringRelatedField)
+from rest_framework.relations import PrimaryKeyRelatedField
 
 from recipes.models import (Favorite,
                             Ingredient,
@@ -130,7 +129,7 @@ class RecipeSerializer(serializers.ModelSerializer):
 class RecipeCreateSerializer(serializers.ModelSerializer):
     """Создание Рецептов"""
 
-    author = serializers.StringRelatedField(read_only=True)
+    author = UserSerializer(read_only=True)
     ingredients = AddRecipeIngredientSerializer(
         source='recipes_ingredients',
         many=True
