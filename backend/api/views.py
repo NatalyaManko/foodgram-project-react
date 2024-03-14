@@ -141,26 +141,40 @@ class ShoppingCartViewSet(viewsets.ModelViewSet):
     serializer_class = ShoppingCartSerializer
     permission_classes = [permissions.IsAuthenticated]
 
-    @action(detail=True, methods=['post'])
+    @action(methods=['post'], detail=True)
     def add_to_cart(self, request, pk=None):
         recipe = get_object_or_404(Recipe, pk=pk)
         shopping_cart, created = ShoppingCart.objects.get_or_create(
             user=request.user
         )
+        if not created and shopping_cart.recipe.filter(
+            id=recipe.id
+        ).exists():
+            return Response(
+                {'detail': 'Этот рецепт уже в вашей корзине.'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
         shopping_cart.recipe.add(recipe)
         return Response(
-            {'message': 'Рецепт добавлен в корзину!'},
+            {'detail': 'Рецепт добавлен в корзину.'},
             status=status.HTTP_201_CREATED
         )
 
-    @action(detail=True, methods=['delete'])
+    @action(methods=['delete'], detail=True)
     def remove_from_cart(self, request, pk=None):
         recipe = get_object_or_404(Recipe, pk=pk)
-        shopping_cart = get_object_or_404(ShoppingCart, user=request.user)
-        shopping_cart.recipe.remove(recipe)
+        shopping_cart = get_object_or_404(
+            ShoppingCart, user=request.user, recipe=recipe
+        )
+        if shopping_cart.recipe.filter(id=recipe.id).exists():
+            shopping_cart.recipe.remove(recipe)
+            return Response(
+                {'detail': 'Рецепт удален из корзины.'},
+                status=status.HTTP_204_NO_CONTENT
+            )
         return Response(
-            {'message': 'Рецепт удален из корзины!'},
-            status=status.HTTP_204_NO_CONTENT
+            {'detail': 'Этот рецепт отсутствует в вашей корзине.'},
+            status=status.HTTP_404_NOT_FOUND
         )
 
     @action(methods=['get'], detail=False, url_path='download_shopping_cart')
