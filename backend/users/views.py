@@ -1,4 +1,3 @@
-from api.permissions import IsAuthorPermission
 from django.core.exceptions import ObjectDoesNotExist
 from djoser.views import UserViewSet
 from rest_framework import permissions, status
