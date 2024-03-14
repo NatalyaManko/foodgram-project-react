@@ -73,7 +73,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
         user = self.request.user
         if Recipe.objects.get(id=self.kwargs.get('pk')).author != user:
             raise PermissionDenied('Изменение чужого контента запрещено!')
-        super(RecipeViewSet, self).perform_update(serializer)
+        super().perform_update(serializer)
 
     def perform_destroy(self, instance):
         user = self.request.user
@@ -113,7 +113,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
                     status=status.HTTP_400_BAD_REQUEST
                 )
             serializer = ShoppingCartSerializer(
-                data={'recipe__shopping_cart': recipe.id},
+                data={'recipe': recipe},
                 context={'request': request}
             )
             if serializer.is_valid(raise_exception=True):
