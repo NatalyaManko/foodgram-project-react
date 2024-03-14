@@ -1,25 +1,3 @@
-<<<<<<< HEAD
-import os
-from pathlib import Path
-
-from dotenv import load_dotenv
-
-load_dotenv()
-
-BASE_DIR = Path(__file__).resolve().parent.parent
-
-SECRET_KEY = os.getenv('SECRET_KEY', 'key')
-
-DEBUG = True
-
-ALLOWED_HOSTS = ['127.0.0.1', 'localhost', 'gurman.myftp.biz']
-
-CORS_ALLOWED_ORIGINS = [
-    'http://localhost:3000',
-]
-CORS_URLS_REGEX = r'^/api/.*$'
-
-=======
 """
 Django settings for foodgram project.
 
@@ -51,7 +29,6 @@ ALLOWED_HOSTS = []
 
 
 # Application definition
->>>>>>> 152dd30ebbb1a1a6a72d4166ef0c99464dc51bc3
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -101,35 +78,20 @@ TEMPLATES = [
 WSGI_APPLICATION = 'foodgram.wsgi.application'
 
 
-<<<<<<< HEAD
-=======
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
->>>>>>> 152dd30ebbb1a1a6a72d4166ef0c99464dc51bc3
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': BASE_DIR / 'db.sqlite3',
-<<<<<<< HEAD
-      #  'ENGINE': 'django.db.backends.postgresql',
-      #  'NAME': os.getenv('POSTGRES_DB', 'foodgram'),
-      #  'USER': os.getenv('POSTGRES_USER', 'jokedump'),
-      #  'PASSWORD': os.getenv('POSTGRES_PASSWORD', ''),
-      #  'HOST': os.getenv('DB_HOST', ''),
-      #  'PORT': os.getenv('DB_PORT', 5432)
-=======
->>>>>>> 152dd30ebbb1a1a6a72d4166ef0c99464dc51bc3
     }
 }
 
 
-<<<<<<< HEAD
-=======
 # Password validation
 # https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators
 
->>>>>>> 152dd30ebbb1a1a6a72d4166ef0c99464dc51bc3
 AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
@@ -147,11 +109,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [
-<<<<<<< HEAD
-        'rest_framework.permissions.IsAuthenticatedOrReadOnly',
-=======
         'rest_framework.permissions.IsAuthenticated',
->>>>>>> 152dd30ebbb1a1a6a72d4166ef0c99464dc51bc3
     ],
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.TokenAuthentication',
@@ -165,13 +123,6 @@ REST_FRAMEWORK = {
     'PAGE_SIZE': 6,
     'DEFAULT_THROTTLE_CLASSES': [
         'rest_framework.throttling.UserRateThrottle',
-<<<<<<< HEAD
-        'rest_framework.throttling.ScopedRateThrottle',
-    ],
-    'DEFAULT_THROTTLE_RATES': {
-        'user': '10000/day',
-        'anon': '1000/day',
-=======
         # Не будем подключать класс AnonRateThrottle глобально.
         # Подключим его только в тех view-классах или вьюсетах,
         # где надо установить лимиты для анонимов
@@ -183,20 +134,16 @@ REST_FRAMEWORK = {
         'anon': '1000/day',  #  Лимит для AnonRateThrottle
         # Имена (ключи) для scope придумывает разработчик, 
         # в меру собственной фантазии
->>>>>>> 152dd30ebbb1a1a6a72d4166ef0c99464dc51bc3
         'travel_speed': '1/minute',
     }
 }
 
-<<<<<<< HEAD
-=======
 #SIMPLE_JWT = {
  #   'ACCESS_TOKEN_LIFETIME': timedelta(days=30),
  #   'AUTH_HEADER_TYPES': ('Bearer',),
 #}
 # Internationalization
 # https://docs.djangoproject.com/en/3.2/topics/i18n/
->>>>>>> 152dd30ebbb1a1a6a72d4166ef0c99464dc51bc3
 
 LANGUAGE_CODE = 'ru-Ru'
 
@@ -209,34 +156,30 @@ USE_L10N = True
 USE_TZ = True
 
 
-<<<<<<< HEAD
-=======
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
 
->>>>>>> 152dd30ebbb1a1a6a72d4166ef0c99464dc51bc3
 STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / 'collected_static'
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
-<<<<<<< HEAD
-
-=======
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
->>>>>>> 152dd30ebbb1a1a6a72d4166ef0c99464dc51bc3
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUTH_USER_MODEL = 'users.User'
 
-<<<<<<< HEAD
+#AUTHENTICATION_BACKEND = 'users.backends.EmailBackend'
+
+
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 DJOSER = {
     'LOGIN_FIELD': 'email',
     'HIDE_USERS': False,
+    'PASSWORD_RESET_CONFIRM_URL': 'users/set_password/{uid}/{token}',
     'SERIALIZERS': {
         'user_create': 'users.serializers.UserCreateSerializer',
         'user': 'users.serializers.UserSerializer',
@@ -248,14 +191,3 @@ DJOSER = {
         'user': ('rest_framework.permissions.AllowAny',),
     },
 }
-=======
-#AUTHENTICATION_BACKEND = 'users.backends.EmailBackend'
-
-
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
-
-DJOSER ={
-    'LOGIN_FIELD': 'email',
-}
- #   'PASSWORD_RESET_CONFIRM_URL': 'set_password/{uid}/{token}',
->>>>>>> 152dd30ebbb1a1a6a72d4166ef0c99464dc51bc3

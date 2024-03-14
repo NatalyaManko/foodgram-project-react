@@ -1,39 +1,11 @@
 import csv
-<<<<<<< HEAD
-
-from django.core.exceptions import ObjectDoesNotExist, PermissionDenied
-from django.db.models import Sum
-from django.http import HttpResponse
-from rest_framework import filters, permissions, status, viewsets
-from rest_framework.decorators import action
-from rest_framework.pagination import LimitOffsetPagination
-from rest_framework.response import Response
-from rest_framework.throttling import AnonRateThrottle
-
-from recipes.models import (Favorite,
-                            Ingredient,
-                            Recipe,
-                            RecipeIngredient,
-                            ShoppingCart,
-                            Tag)
-
-from .filters import IngredientFilter, RecipeFilter, TagFilter
-from .permissions import IsAuthorPermission, IsAdminOrReadOnlyPermission, IsAdminPermission
-from .serializers import (FavoriteSerializer,
-                          IngredientSerializer,
-                          RecipeCreateSerializer,
-                          RecipeGetSerializer,
-                          ShoppingCartSerializer,
-                          TagSerializer)
-=======
 from django.shortcuts import render
 from rest_framework import viewsets, filters, status, permissions
-#from rest_framework. import IsAuthenticationOrReadOnly, IsAdminUser
 from django_filters.rest_framework import DjangoFilterBackend
+#from rest_framework. import IsAuthenticationOrReadOnly, IsAdminUser
 from rest_framework.throttling import AnonRateThrottle
 from rest_framework.decorators import action
 from rest_framework.response import Response
-from django.shortcuts import get_object_or_404
 from recipes.models import (Recipe, Tag, Ingredient,
                             RecipeIngredient,
                             ShoppingCart,
@@ -46,300 +18,174 @@ from .serializers import (RecipeGetSerializer,
                           IngredientSerializer,
                           ShoppingCartSerializer,
                           FavoriteSerializer)
-from .paginations import PagePagination
-from .filters import TagFilter, IngredientFilter, RecipeFilter
-from .permissions import (#IsUserOrAuthorOrAdminOrReadOnly,
-                          ReadOnly,
-                          IsAuthorOrAdminPermission,
-                          IsCurrentUserOrOwnerPermission,
-                          IsAuthorPermission
-                          )
+from .filters import TagFilter, RecipeFilter
+from .permissions import (IsAuthorPermission)
+from rest_framework.exceptions import PermissionDenied, ValidationError
 
->>>>>>> 152dd30ebbb1a1a6a72d4166ef0c99464dc51bc3
+from rest_framework.pagination import LimitOffsetPagination
 
 
 class TagListRetrieve(viewsets.ReadOnlyModelViewSet):
     queryset = Tag.objects.all()
     serializer_class = TagSerializer
-<<<<<<< HEAD
-  #  permission_classes = (IsAdminOrReadOnlyPermission,)
+    permission_classes = (permissions.AllowAny,)
     pagination_class = None
-    filter_baskend = (filters.SearchFilter,)
-    filterset_class = TagFilter
-    search_fields = ('name')
-=======
-    permission_classes = (permissions.IsAdminUser,)
-    pagination_class = None
-    filter_baskend = (filters.SearchFilter,)
+    filter_backend = (filters.SearchFilter,)
     filterset_class = TagFilter
     search_fields = ('name',)
->>>>>>> 152dd30ebbb1a1a6a72d4166ef0c99464dc51bc3
 
 
 class IngredientListRetrieve(viewsets.ReadOnlyModelViewSet):
     queryset = Ingredient.objects.all()
     serializer_class = IngredientSerializer
-<<<<<<< HEAD
- #   permission_classes = (IsAdminOrReadOnlyPermission,)
+    permission_classes = (permissions.AllowAny,)
     pagination_class = None
-=======
-    permission_classes = (permissions.IsAdminUser,)
-    pagination_class = PagePagination
->>>>>>> 152dd30ebbb1a1a6a72d4166ef0c99464dc51bc3
-    filter_baskend = (filters.SearchFilter,
-                      filters.OrderingFilter)
-    filterset_class = IngredientFilter
-    search_fields = ('^name',)
+    filter_backend = (filters.OrderingFilter)
     ordering_fields = ('name',)
+    
+    def get_queryset(self):
+        queryset = Ingredient.objects.all()
+        name_query = self.request.query_params.get('name', None)
+        if name_query:
+            queryset = queryset.filter(name__startswith=name_query)
+        return queryset
 
 
 class RecipeViewSet(viewsets.ModelViewSet):
     queryset = Recipe.objects.all()
-<<<<<<< HEAD
-    permission_classes = (
-        permissions.IsAuthenticatedOrReadOnly,
-        IsAuthorPermission,
-  #      IsAdminPermission,
-    )
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly,
+                          IsAuthorPermission)
     pagination_class = LimitOffsetPagination
-=======
-    permission_class = (permissions.IsAuthenticatedOrReadOnly,
-                        IsAuthorOrAdminPermission,
-                        ReadOnly,)
->>>>>>> 152dd30ebbb1a1a6a72d4166ef0c99464dc51bc3
     throttle_classes = (AnonRateThrottle,)
     throttle_scope = 'travel_speed'
-    filter_baskend = (filters.SearchFilter,
+    filter_backend = (DjangoFilterBackend,
                       filters.OrderingFilter)
     filterset_class = RecipeFilter
-    search_fields = ('^name',)
     ordering_fields = ('-id',)
-<<<<<<< HEAD
-
-    def get_serializer_class(self):
-        if self.action == ('list', 'retrieve'):
-            return RecipeGetSerializer
-        return RecipeCreateSerializer
-
-    def perform_update(self, serializer, **kwargs):
-        user = self.request.user
-        if Recipe.objects.get(id=self.kwargs.get('pk')).author != user:
-            raise PermissionDenied('Изменение чужого контента запрещено!')
-        super(RecipeViewSet, self).perform_update(serializer)
-
-    def perform_destroy(self, serializer, **kwargs):
-        user = self.request.user
-        try:
-            Recipe.objects.get(id=self.kwargs.get('pk'), author=user).delete()
-            return Response('Успешное удаление!',
-                            status=status.HTTP_204_NO_CONTENT)
-        except ObjectDoesNotExist:
-            if Recipe.objects.get(id=self.kwargs.get('pk')).author != user:
-                raise PermissionDenied('Изменение чужого контента запрещено!')
-            else:
-                return Response({'errors': 'Рецепт не найден!'},
-                                status=status.HTTP_404_NOT_FOUND)
-
-    @action(methods=['post', 'delete'],
-            detail=True,
-            url_path='shopping_cart',
-            permission_classes=[permissions.IsAuthenticated])
-=======
     
     def get_serializer_class(self):
         if self.action ==('list', 'retrieve'):
             return RecipeGetSerializer
         return RecipeCreateSerializer
 
-    @action(methods=['post', 'delete'],
-            detail=True,
-            url_path='shopping_cart',
-            permission_classes=[IsCurrentUserOrOwnerPermission])
->>>>>>> 152dd30ebbb1a1a6a72d4166ef0c99464dc51bc3
-    def shopping_cart(self, request, **kwargs):
-        """
-        Получить / Добавить / Удалить  рецепт
-        из списка покупок у текущего пользоватля.
-        """
-<<<<<<< HEAD
-        user = self.request.user
-        if request.method == 'POST':
-            try:
-                recipe = Recipe.objects.get(id=self.kwargs.get('pk'))
-            except ObjectDoesNotExist:
-                return Response({'errors': 'Рецепт не найден!'},
-                                status=status.HTTP_400_BAD_REQUEST)
-            if ShoppingCart.objects.filter(user=user,
-                                           recipe=recipe).exists():
-                return Response(
-                    {'errors': 'Рецепт уже добавлен в список покупок!'},
-                    status=status.HTTP_400_BAD_REQUEST
-                )
-=======
-        try:
-            recipe = Recipe.objects.get(id=self.kwargs.get('pk'))
-        except:
-            return Response({'errors': 'Объект не найден!'},
-                            status=status.HTTP_404_NOT_FOUND)
-        user = self.request.user
-        if request.method == 'POST':
->>>>>>> 152dd30ebbb1a1a6a72d4166ef0c99464dc51bc3
-            serializer = ShoppingCartSerializer(
-                data=request.data,
-                context={'request': request, 'recipe': recipe})
-            if serializer.is_valid(raise_exception=True):
-                serializer.save(user=user, recipe=recipe)
-                return Response(serializer.data,
-                                status=status.HTTP_201_CREATED)
-<<<<<<< HEAD
-        elif request.method == 'DELETE':
-            try:
-                recipe = Recipe.objects.get(id=self.kwargs.get('pk'))
-            except ObjectDoesNotExist:
-                return Response({'errors': 'Рецепт не найден!'},
-                                status=status.HTTP_404_NOT_FOUND)
+    def perform_update(self, serializer, **kwargs):
+        recipe = self.get_object()
+        if recipe.author != self.request.user:
+            raise PermissionDenied('Изменение чужого контента запрещено!')
+        super().perform_update(serializer, **kwargs)
 
-=======
->>>>>>> 152dd30ebbb1a1a6a72d4166ef0c99464dc51bc3
-        if ShoppingCart.objects.filter(user=user,
-                                       recipe=recipe).exists():
-            ShoppingCart.objects.get(recipe=recipe).delete()
-            return Response(
-                {'errors': 'Рецепт успешно удален из списка покупок!'},
-                status=status.HTTP_204_NO_CONTENT
-            )
+    def perform_destroy(self, instance):
+        if instance.author != self.request.user:
+            raise PermissionDenied('У вас нет прав для удаления этого рецепта!')
+        instance.delete()
+        return Response('Успешное удаление!', status=status.HTTP_204_NO_CONTENT)
+
+
+class ShoppingCartViewSet(viewsets.ModelViewSet):
+    
+    queryset = ShoppingCart.objects.all()
+    serializer_class = ShoppingCartSerializer
+    permission_classes = [permissions.IsAuthenticated]
+    pagination_class=None
+
+    @action(methods=['post'],
+            detail=True)
+    def add_recipe_to_cart(self, request, pk=None):
+        """
+        Добавляет рецепт в список покупок текущего пользователя.
+        """
+        recipe = Recipe.objects.get(pk=pk)
+        if recipe:
+            ShoppingCart.objects.create(user=request.user, recipe=recipe)
+            return Response({"message": "Рецепт успешно добавлен в список покупок."}, status=status.HTTP_201_CREATED)
         else:
-            return Response(
-                {'errors': 'Рецепт не был добавлен в список покупок!'},
-<<<<<<< HEAD
-                status=status.HTTP_400_BAD_REQUEST
-            )
-=======
-                 status=status.HTTP_400_BAD_REQUEST
-                 )
->>>>>>> 152dd30ebbb1a1a6a72d4166ef0c99464dc51bc3
+            return Response({"error": "Рецепт не найден."}, status=status.HTTP_404_NOT_FOUND)
+
+    @action(methods=['post'],
+            detail=True)
+    def remove_recipe_from_cart(self, request, pk=None):
+        """
+        Удаляет рецепт из списка покупок текущего пользователя.
+        """
+        try:
+            shopping_cart_item = ShoppingCart.objects.get(pk=pk, user=request.user)
+            shopping_cart_item.delete()
+            return Response({'error': 'Рецепт успешно удален из списка покупок!'},
+                            status=status.HTTP_204_NO_CONTENT)
+        except ShoppingCart.DoesNotExist:
+            return Response({"error": "Запись не найдена!"}, status=status.HTTP_404_NOT_FOUND)
 
     @action(methods=['get'],
             detail=False,
-            url_path='download_shopping_cart',
-<<<<<<< HEAD
-            permission_classes=[IsAuthorPermission])
-=======
-            permission_classes=[IsAuthorPermission]) # проверить без него!!!
->>>>>>> 152dd30ebbb1a1a6a72d4166ef0c99464dc51bc3
+            url_path='download_shopping_cart')
     def export_shopping_cart(self, request):
         """Отправка csv-файла со списком покупок"""
-        shopping_cart_items = (RecipeIngredient.objects.filter(
-            recipe__shopping_cart__user=self.request.user).
-            prefetch_related('recipe__shopping_card', 'user', 'ingredient').
-            values('ingredient__name', 'ingredient__measurement_unit').
-<<<<<<< HEAD
-            annotate(ingredient_amount=Sum('amount'))
+        shopping_cart_items = RecipeIngredient.objects.filter(
+            recipe__shopping_cart__user=self.request.user
+        ).prefetch_related(
+            'recipe__shopping_cart', 'user', 'ingredient'
+        ).values(
+            'ingredient__name', 'ingredient__measurement_unit'
+        ).annotate(
+            ingredient_amount=Sum('amount')
         )
-=======
-            annotate(ingredient_amount=Sum('amount')
-                     )
-            )
->>>>>>> 152dd30ebbb1a1a6a72d4166ef0c99464dc51bc3
-        shopping_cart = []
-        for item in shopping_cart_items:
-            shopping_cart.append({
+        
+        shopping_cart = [
+            {
                 'Название': item['ingredient__name'],
                 'Единица измерения': item['ingredient__measurement_unit'],
                 'Количество': item['ingredient_amount'],
-            })
-<<<<<<< HEAD
+            }
+            for item in shopping_cart_items
+        ]
 
-=======
-  
->>>>>>> 152dd30ebbb1a1a6a72d4166ef0c99464dc51bc3
         response = HttpResponse(content_type='text/csv')
-        response['Content-Disposition'] = \
+        response['Content-Disposition'] = (
             'attachment; filename="shopping_cart.csv"'
-        writer = csv.DictWriter(response,
-<<<<<<< HEAD
-                                fieldnames=['Название',
-                                            'Единица измерения',
-                                            'Количество'])
-=======
-                                    fieldnames=['Название',
-                                                'Единица измерения',
-                                                'Количество']
-                                    )
->>>>>>> 152dd30ebbb1a1a6a72d4166ef0c99464dc51bc3
+        )
+        response.write(u'\ufeff'.encode('utf-8'))
+        
+        writer = csv.DictWriter(
+            response, fieldnames=[
+                'Название', 'Единица измерения', 'Количество'
+            ]
+        )
         writer.writeheader()
         writer.writerows(shopping_cart)
+
         return response
 
-    @action(methods=['post', 'delete'],
-            detail=True,
-            url_path='favorite',
-<<<<<<< HEAD
-            permission_classes=[permissions.IsAuthenticated]
-            )
-=======
-            permission_classes=[IsCurrentUserOrOwnerPermission])
->>>>>>> 152dd30ebbb1a1a6a72d4166ef0c99464dc51bc3
-    def favourites(self, request, **kwargs):
-        """
-        Добавить / Удалить  рецепт
-        из избранного текущего пользоватля.
-        """
-<<<<<<< HEAD
-        user = self.request.user
-        if request.method == 'POST':
-            try:
-                recipe = Recipe.objects.get(id=self.kwargs.get('pk'))
-            except ObjectDoesNotExist:
-                return Response({'errors': 'Объект не найден!'},
-                                status=status.HTTP_400_BAD_REQUEST)
-            if Favorite.objects.filter(user=user,
-                                       recipe=recipe).exists():
-                return Response({'errors': 'Рецепт уже добавлен в избранное!'},
-                                status=status.HTTP_400_BAD_REQUEST)
-=======
-        try:
-            recipe = Recipe.objects.get(id=self.kwargs.get('pk'))
-        except:
-            return Response({'errors': 'Объект не найден!'},
-                            status=status.HTTP_404_NOT_FOUND)
-     #   recipe = get_object_or_404(Recipe, id=self.kwargs.get('pk'))
-        user = self.request.user
-        if request.method == 'POST':
->>>>>>> 152dd30ebbb1a1a6a72d4166ef0c99464dc51bc3
-            serializer = FavoriteSerializer(
-                data=request.data,
-                context={'request': request, 'recipe': recipe})
-            if serializer.is_valid(raise_exception=True):
-                serializer.save(user=user, recipe=recipe)
-                return Response(serializer.data,
-                                status=status.HTTP_201_CREATED)
-<<<<<<< HEAD
-        elif request.method == 'DELETE':
-            try:
-                recipe = Recipe.objects.get(id=self.kwargs.get('pk'))
-            except ObjectDoesNotExist:
-                return Response({'errors': 'Рецепт не найден!'},
-                                status=status.HTTP_404_NOT_FOUND)
 
-        if Favorite.objects.filter(user=user,
-                                   recipe=recipe).exists():
-=======
-        if Favorite.objects.filter(user=user,
-                                       recipe=recipe).exists():
->>>>>>> 152dd30ebbb1a1a6a72d4166ef0c99464dc51bc3
-            Favorite.objects.get(recipe=recipe).delete()
-            return Response(
-                {'errors': 'Рецепт успешно удален из избранного!'},
-                status=status.HTTP_204_NO_CONTENT
-            )
+class FavoriteViewSet(viewsets.ModelViewSet):
+    """ViewSet для модели Favorite."""
+
+    queryset = Favorite.objects.all()
+    serializer_class = FavoriteSerializer
+    permission_classes = [permissions.IsAuthenticated]
+    pagination_class=None
+
+    @action(methods=['post'],
+            detail=True)
+    def add_recipe_to_cart(self, request, pk=None):
+        """
+        Добавляет рецепт в избранное текущего пользователя.
+        """
+        recipe = Recipe.objects.get(pk=pk)
+        if recipe:
+            Favorite.objects.create(user=request.user, recipe=recipe)
+            return Response({"error": "Рецепт успешно добавлен в избранное!"}, status=status.HTTP_201_CREATED)
         else:
-            return Response(
-                {'errors': 'Рецепт не был добавлен в избранное!'},
-<<<<<<< HEAD
-                status=status.HTTP_400_BAD_REQUEST
-            )
-=======
-                 status=status.HTTP_400_BAD_REQUEST
-                 )
->>>>>>> 152dd30ebbb1a1a6a72d4166ef0c99464dc51bc3
+            return Response({"error": "Рецепт не найден."}, status=status.HTTP_404_NOT_FOUND)
+
+    @action(methods=['delete'],
+            detail=True)
+    def remove_recipe_from_cart(self, request, pk=None):
+        """
+        Удаляет рецепт из избранного текущего пользователя.
+        """
+        try:
+            favorite_item = Favorite.objects.get(pk=pk, user=request.user)
+            favorite_item.delete()
+            return Response({"error": "Рецепт успешно удален из избранного."}, status=status.HTTP_204_NO_CONTENT)
+        except Favorite.DoesNotExist:
+            return Response({"error": "Запись не найдена."}, status=status.HTTP_404_NOT_FOUND)
