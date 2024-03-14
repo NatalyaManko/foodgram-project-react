@@ -117,16 +117,10 @@ class FollowSerializer(serializers.ModelSerializer):
     def get_recipes_count(self, obj):
         return Recipe.objects.filter(author=obj.following).count()
 
-    def to_representation(self, instance):
-        data = super().to_representation(instance)
-        recipes_limit = self.context.get(
-            'request'
-        ).query_params.get('recipes_limit')
-        recipes = instance.recipes.all()
+    def get_recipes(self, obj):
+        request = self.context.get('request')
+        recipes_limit = request.query_params.get('recipes_limit')
+        recipes = Recipe.objects.filter(author=obj.following)
         if recipes_limit:
             recipes = recipes[:int(recipes_limit)]
-        data['recipes'] = api.serializers.RecipeSerializer(
-            recipes,
-            many=True
-        ).data
-        return data
+        return api.serializers.RecipeSerializer(recipes, many=True).data
