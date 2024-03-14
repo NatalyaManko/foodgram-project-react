@@ -93,8 +93,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
     @action(methods=['post', 'delete'],
             detail=True,
             url_path='shopping_cart',
-            permission_classes=[permissions.IsAuthenticated,
-                                IsAuthorPermission])
+            permission_classes=[permissions.IsAuthenticated])
     def shopping_cart(self, request, **kwargs):
         """
         Получить / Добавить / Удалить  рецепт

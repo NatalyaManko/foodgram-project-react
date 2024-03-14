@@ -130,7 +130,7 @@ class RecipeSerializer(serializers.ModelSerializer):
 class RecipeCreateSerializer(serializers.ModelSerializer):
     """Создание Рецептов"""
 
-    author = StringRelatedField(read_only=True)
+    author = serializers.StringRelatedField(read_only=True)
     ingredients = AddRecipeIngredientSerializer(
         source='recipes_ingredients',
         many=True
@@ -287,7 +287,7 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
 class RecipeGetSerializer(serializers.ModelSerializer):
     """Сериализатор чтения Рецептa"""
 
-    author = UserSerializer
+    author = UserSerializer()
     ingredients = RecipeIngredientSerializer(many=True,
                                              read_only=True,
                                              source='recipes_ingredients')
