@@ -141,29 +141,40 @@ class ShoppingCartViewSet(viewsets.ModelViewSet):
     serializer_class = ShoppingCartSerializer
     permission_classes = [permissions.IsAuthenticated]
 
-    @action(detail=True,
-            methods=['post'])
+    @action(detail=True, methods=['post'])
     def add_to_cart(self, request, pk=None):
         recipe = get_object_or_404(Recipe, pk=pk)
         if ShoppingCart.objects.filter(user=request.user,
                                        recipe=recipe).exists():
-            return Response({'message': 'Рецепт уже в корзине!'},
-                            status=status.HTTP_400_BAD_REQUEST)
-        shopping_cart = ShoppingCart.objects.create(user=request.user,
-                                                    recipe=recipe)
-        serializer = self.get_serializer(shopping_cart)
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+            return Response(
+                {'message': 'Рецепт уже в корзине!'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        ShoppingCart.objects.create(user=request.user)
+        shopping_cart = ShoppingCart.objects.get(user=request.user)
+        shopping_cart.recipe.add(recipe)
+        return Response(
+            {'message': 'Рецепт добавлен в корзину!'},
+            status=status.HTTP_201_CREATED
+        )
 
-    @action(detail=True,
-            methods=['delete'])
+    @action(detail=True, methods=['delete'])
     def remove_from_cart(self, request, pk=None):
-        shopping_cart = self.get_object()
-        if shopping_cart.user != request.user:
-            return Response({'error': 'У вас нет прав для удаления!'},
-                            status=status.HTTP_403_FORBIDDEN)
-        shopping_cart.delete()
-        return Response({'message': 'Рецепт удален из корзины!'},
-                        status=status.HTTP_204_NO_CONTENT)
+        recipe = get_object_or_404(Recipe, pk=pk)
+        shopping_cart = ShoppingCart.objects.filter(
+            user=request.user, recipe=recipe
+        )
+        if shopping_cart.exists():
+            shopping_cart.delete()
+            return Response(
+                {'message': 'Рецепт удален из корзины!'},
+                status=status.HTTP_204_NO_CONTENT
+            )
+        else:
+            return Response(
+                {'error': 'Рецепт не найден в корзине!'},
+                status=status.HTTP_404_NOT_FOUND
+            )
 
     @action(methods=['get'],
             detail=False,
