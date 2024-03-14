@@ -17,7 +17,7 @@ class CustomUserViewSet(UserViewSet):
     """ViewSet пользователя"""
     queryset = User.objects.all()
     pagination_class = LimitOffsetPagination
-    permission_classes = (permissions.AllowAny, IsAuthorPermission)
+    permission_classes = (permissions.AllowAny)
 
     def get_serializer_class(self):
         if self.action in ('list', 'retrieve'):
