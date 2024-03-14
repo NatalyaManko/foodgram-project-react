@@ -63,7 +63,7 @@ class CustomUserViewSet(UserViewSet):
         """Создание и удаление подписки"""
         follower = self.request.user
         try:
-            following = User.objects.get(id=self.kwargs.get('pk'))
+            following = User.objects.get(id=self.kwargs.get('id'))
         except ObjectDoesNotExist:
             return Response({'errors': 'Объект не найден!'},
                             status=status.HTTP_404_NOT_FOUND)
