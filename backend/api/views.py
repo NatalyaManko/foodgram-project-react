@@ -113,7 +113,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
                     status=status.HTTP_400_BAD_REQUEST
                 )
             serializer = ShoppingCartSerializer(
-                data={'shopping_cart': recipe.id},
+                data={'recipe__shopping_cart': recipe.id},
                 context={'request': request}
             )
             if serializer.is_valid(raise_exception=True):
