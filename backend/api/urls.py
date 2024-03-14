@@ -10,6 +10,8 @@ app_name = 'api'
 router = DefaultRouter()
 
 router.register(r'recipes', RecipeViewSet, basename='recipes')
+router.register(r'recipes/(?P<post_pk>\d+)/shopping_cart',
+                RecipeViewSet, basename='shopcart')
 router.register(r'tags', TagListRetrieve, basename='tags')
 router.register(
     r'ingredients',

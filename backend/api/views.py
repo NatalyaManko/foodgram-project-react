@@ -3,6 +3,7 @@ import csv
 from django.core.exceptions import ObjectDoesNotExist, PermissionDenied
 from django.db.models import Sum
 from django.http import HttpResponse
+from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters, permissions, status, viewsets
 from rest_framework.decorators import action
@@ -92,79 +93,6 @@ class RecipeViewSet(viewsets.ModelViewSet):
 
     @action(methods=['post', 'delete'],
             detail=True,
-            url_path='shopping_cart',
-            permission_classes=[permissions.IsAuthenticated])
-    def shopping_cart(self, request, **kwargs):
-        """
-        Получить / Добавить / Удалить  рецепт
-        из списка покупок у текущего пользоватля.
-        """
-        user = self.request.user
-        try:
-            recipe = Recipe.objects.get(id=self.kwargs.get('pk'))
-        except ObjectDoesNotExist:
-            return Response({'errors': 'Рецепт не найден!'},
-                            status=status.HTTP_404_NOT_FOUND)
-
-        if request.method == 'POST':
-            if ShoppingCart.objects.filter(user=user,
-                                           recipe_id=recipe).exists():
-                return Response(
-                    {'errors': 'Рецепт уже добавлен в список покупок!'},
-                    status=status.HTTP_400_BAD_REQUEST
-                )
-            serializer = ShoppingCartSerializer(
-                data=request.data,
-                context={'request': request, 'recipe_id': recipe}
-            )
-            if serializer.is_valid(raise_exception=True):
-                serializer.save(user=user)
-                return Response(serializer.data,
-                                status=status.HTTP_201_CREATED)
-        elif request.method == 'DELETE':
-            try:
-                cart_item = ShoppingCart.objects.get(user=user, recipe=recipe)
-            except ObjectDoesNotExist:
-                return Response(
-                    {'errors': 'Рецепт не был добавлен в список покупок!'},
-                    status=status.HTTP_400_BAD_REQUEST)
-            cart_item.delete()
-            return Response(
-                {'message': 'Рецепт успешно удален из списка покупок!'},
-                status=status.HTTP_204_NO_CONTENT
-            )
-
-    @action(methods=['get'],
-            detail=False,
-            url_path='download_shopping_cart',)
-    def export_shopping_cart(self, request):
-        """Отправка csv-файла со списком покупок"""
-        shopping_cart_items = (RecipeIngredient.objects.filter(
-            recipe__shopping_cart__user=self.request.user).
-            prefetch_related('recipe__shopping_card', 'user', 'ingredient').
-            values('ingredient__name', 'ingredient__measurement_unit').
-            annotate(ingredient_amount=Sum('amount'))
-        )
-        shopping_cart = []
-        for item in shopping_cart_items:
-            shopping_cart.append({
-                'Название': item['ingredient__name'],
-                'Единица измерения': item['ingredient__measurement_unit'],
-                'Количество': item['ingredient_amount'],
-            })
-        response = HttpResponse(content_type='text/csv')
-        response['Content-Disposition'] = \
-            'attachment; filename="shopping_cart.csv"'
-        writer = csv.DictWriter(response,
-                                fieldnames=['Название',
-                                            'Единица измерения',
-                                            'Количество'])
-        writer.writeheader()
-        writer.writerows(shopping_cart)
-        return response
-
-    @action(methods=['post', 'delete'],
-            detail=True,
             url_path='favorite',
             permission_classes=[permissions.IsAuthenticated])
     def favourites(self, request, **kwargs):
@@ -206,3 +134,62 @@ class RecipeViewSet(viewsets.ModelViewSet):
                     {'errors': 'Рецепт не был добавлен в избранное!'},
                     status=status.HTTP_400_BAD_REQUEST
                 )
+
+
+class ShoppingCartViewSet(viewsets.ModelViewSet):
+    queryset = ShoppingCart.objects.all()
+    serializer_class = ShoppingCartSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    @action(detail=True,
+            methods=['post'])
+    def add_to_cart(self, request, pk=None):
+        recipe = get_object_or_404(Recipe, pk=pk)
+        if ShoppingCart.objects.filter(user=request.user,
+                                       recipe=recipe).exists():
+            return Response({'message': 'Рецепт уже в корзине!'},
+                            status=status.HTTP_400_BAD_REQUEST)
+        shopping_cart = ShoppingCart.objects.create(user=request.user,
+                                                    recipe=recipe)
+        serializer = self.get_serializer(shopping_cart)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+    @action(detail=True,
+            methods=['delete'])
+    def remove_from_cart(self, request, pk=None):
+        shopping_cart = self.get_object()
+        if shopping_cart.user != request.user:
+            return Response({'error': 'У вас нет прав для удаления!'},
+                            status=status.HTTP_403_FORBIDDEN)
+        shopping_cart.delete()
+        return Response({'message': 'Рецепт удален из корзины!'},
+                        status=status.HTTP_204_NO_CONTENT)
+
+    @action(methods=['get'],
+            detail=False,
+            url_path='download_shopping_cart')
+    def export_shopping_cart(self, request):
+        """Отправка csv-файла со списком покупок"""
+        shopping_cart_items = (RecipeIngredient.objects.filter(
+            recipe__shopping_cart__user=self.request.user).
+            prefetch_related('recipe__shopping_card', 'user', 'ingredient').
+            values('ingredient__name', 'ingredient__measurement_unit').
+            annotate(ingredient_amount=Sum('amount'))
+        )
+        shopping_cart = []
+        for item in shopping_cart_items:
+            shopping_cart.append({
+                'Название': item['ingredient__name'],
+                'Единица измерения': item['ingredient__measurement_unit'],
+                'Количество': item['ingredient_amount'],
+            })
+        response = HttpResponse(content_type='text/csv; charset=utf-8')
+        response['Content-Disposition'] = \
+            'attachment; filename="shopping_cart.csv"'
+        writer = csv.DictWriter(response,
+                                fieldnames=['Название',
+                                            'Единица измерения',
+                                            'Количество'])
+        writer.writeheader()
+        writer.writerows(shopping_cart)
+        return response
