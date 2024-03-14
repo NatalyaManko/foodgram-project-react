@@ -144,14 +144,9 @@ class ShoppingCartViewSet(viewsets.ModelViewSet):
     @action(detail=True, methods=['post'])
     def add_to_cart(self, request, pk=None):
         recipe = get_object_or_404(Recipe, pk=pk)
-        if ShoppingCart.objects.filter(user=request.user,
-                                       recipe=recipe).exists():
-            return Response(
-                {'message': 'Рецепт уже в корзине!'},
-                status=status.HTTP_400_BAD_REQUEST
-            )
-        ShoppingCart.objects.create(user=request.user)
-        shopping_cart = ShoppingCart.objects.get(user=request.user)
+        shopping_cart, created = ShoppingCart.objects.get_or_create(
+            user=request.user
+        )
         shopping_cart.recipe.add(recipe)
         return Response(
             {'message': 'Рецепт добавлен в корзину!'},
@@ -161,29 +156,19 @@ class ShoppingCartViewSet(viewsets.ModelViewSet):
     @action(detail=True, methods=['delete'])
     def remove_from_cart(self, request, pk=None):
         recipe = get_object_or_404(Recipe, pk=pk)
-        shopping_cart = ShoppingCart.objects.filter(
-            user=request.user, recipe=recipe
+        shopping_cart = get_object_or_404(ShoppingCart, user=request.user)
+        shopping_cart.recipe.remove(recipe)
+        return Response(
+            {'message': 'Рецепт удален из корзины!'},
+            status=status.HTTP_204_NO_CONTENT
         )
-        if shopping_cart.exists():
-            shopping_cart.delete()
-            return Response(
-                {'message': 'Рецепт удален из корзины!'},
-                status=status.HTTP_204_NO_CONTENT
-            )
-        else:
-            return Response(
-                {'error': 'Рецепт не найден в корзине!'},
-                status=status.HTTP_404_NOT_FOUND
-            )
 
-    @action(methods=['get'],
-            detail=False,
-            url_path='download_shopping_cart')
+    @action(methods=['get'], detail=False, url_path='download_shopping_cart')
     def export_shopping_cart(self, request):
         """Отправка csv-файла со списком покупок"""
         shopping_cart_items = (RecipeIngredient.objects.filter(
             recipe__shopping_cart__user=self.request.user).
-            prefetch_related('recipe__shopping_card', 'user', 'ingredient').
+            prefetch_related('recipe__shopping_cart', 'ingredient').
             values('ingredient__name', 'ingredient__measurement_unit').
             annotate(ingredient_amount=Sum('amount'))
         )
@@ -194,13 +179,17 @@ class ShoppingCartViewSet(viewsets.ModelViewSet):
                 'Единица измерения': item['ingredient__measurement_unit'],
                 'Количество': item['ingredient_amount'],
             })
-        response = HttpResponse(content_type='text/csv; charset=utf-8')
-        response['Content-Disposition'] = \
+        response = HttpResponse(content_type='text/csv')
+        response['Content-Disposition'] = (
             'attachment; filename="shopping_cart.csv"'
+        )
         writer = csv.DictWriter(response,
-                                fieldnames=['Название',
-                                            'Единица измерения',
-                                            'Количество'])
+                                fieldnames=[
+                                    'Название',
+                                    'Единица измерения',
+                                    'Количество'
+                                ],
+                                delimiter=';')
         writer.writeheader()
         writer.writerows(shopping_cart)
         return response
