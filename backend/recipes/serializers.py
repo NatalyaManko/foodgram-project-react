@@ -5,7 +5,7 @@ from django.conf import settings
 from django.core.files.base import ContentFile
 from rest_framework import serializers
 
-from recipes.models import Recipe, RecipeIngredient
+from recipes.models import Ingredient, Recipe, RecipeIngredient
 from tags.models import Tag
 from tags.serializers import TagSerializer
 from users.serializers import UserSerializer
@@ -49,7 +49,8 @@ class RecipeIngredientSerializer(serializers.ModelSerializer):
 
 
 class RecipeIngredientSimpleSerializer(serializers.ModelSerializer):
-    id = serializers.IntegerField()
+    id = serializers.PrimaryKeyRelatedField(
+        source='ingredient.id', queryset=Ingredient.objects.all())
     amount = serializers.IntegerField(
         min_value=settings.MIN_SMALL_NUMBER,
         max_value=settings.MAX_SMALL_NUMBER)
