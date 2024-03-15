@@ -48,11 +48,9 @@ class IngredientFilter(FilterSet):
 
 
 class RecipeFilter(FilterSet):
-
-    author = ModelMultipleChoiceFilter(queryset=User.objects.all(),
-                                       field_name='author__username',
-                                       lookup_expr='icontains',
-                                       label='Имя автора')
+   # breakpoint()
+    author_id = NumberFilter(field_name='author_id',
+                            label='Имя автора')
     tags = ModelMultipleChoiceFilter(
         field_name='tags__slug',
         to_field_name='slug',
@@ -65,7 +63,7 @@ class RecipeFilter(FilterSet):
 
     class Meta:
         model = Recipe
-        fields = ('author',
+        fields = ('author_id',
                   'tags',
                   'is_favorited',
                   'is_in_shopping_cart',)

@@ -348,17 +348,21 @@ class ShoppingCartSerializer(serializers.ModelSerializer):
         fields = ('id', 'name', 'image', 'cooking_time',)
 
     def validate(self, data):
-        user = self.context.get('request').user
-        recipe_pk = self.context.get('pk')
-        if ShoppingCart.objects.filter(
-                recipe=recipe_pk,
-                user=user).exists():
-            raise serializers.ValidationError(
-                {'errors': 'Вы уже добавили этот рецепт в список покупок!'},
-                code=status.HTTP_400_BAD_REQUEST
-            )
-        return data
+        user = self.context['request'].user
+        recipe_id = self.initial_data.get('recipe_id')
 
+        # Проверка наличия рецепта
+        try:
+            recipe = Recipe.objects.get(id=recipe_id)
+        except Recipe.DoesNotExist:
+            raise serializers.ValidationError("Рецепт с указанным ID не найден.")
+
+        # Проверка, был ли рецепт добавлен ранее
+        if ShoppingCart.objects.filter(user=user, recipe=recipe).exists():
+            raise serializers.ValidationError("Этот рецепт уже добавлен в ваш список покупок.")
+
+        return data
+        
 
 class FavoriteSerializer(serializers.ModelSerializer):
     """Сериализатор Избранного"""

@@ -1,22 +1,24 @@
 from django.core.exceptions import ObjectDoesNotExist
 from djoser.views import UserViewSet
-from rest_framework import permissions, status
+from rest_framework import permissions, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.response import Response
+from django.shortcuts import get_object_or_404
+
 
 from .models import Follow, User
-from .paginations import LimitPagePaginator
 from .serializers import (FollowSerializer,
                           UserCreateSerializer,
                           UserSerializer)
+from api.permissions import IsAuthorPermission
 
 
 class CustomUserViewSet(UserViewSet):
     """ViewSet пользователя"""
     queryset = User.objects.all()
     pagination_class = LimitOffsetPagination
-    permission_classes = (permissions.AllowAny)
+    permission_classes = (permissions.AllowAny,)
 
     def get_serializer_class(self):
         if self.action in ('list', 'retrieve'):
@@ -51,50 +53,46 @@ class CustomUserViewSet(UserViewSet):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+
+class FollowViewSet(viewsets.ModelViewSet):
+    queryset = Follow.objects.all()
+    serializer_class = FollowSerializer
+    permission_classes = (permissions.IsAuthenticated, IsAuthorPermission,)
+    pagination_class=None
+
     @action(
         methods=['post', 'delete'],
         detail=True,
-        url_path='subscribe',
-        permission_classes=[permissions.IsAuthenticated],
-        pagination_class=LimitPagePaginator
     )
-    def subscribe(self, request, *args, **kwargs):
+    def subscribe(self, request, **kwargs):
         """Создание и удаление подписки"""
-        follower = self.request.user
+        breakpoint()        
+        follower = request.user
         try:
-            following = User.objects.get(id=self.kwargs.get('id'))
+            following = User.objects.get(id=self.kwargs.get('pk'))
         except ObjectDoesNotExist:
             return Response({'errors': 'Объект не найден!'},
                             status=status.HTTP_404_NOT_FOUND)
         if request.method == 'POST':
+            if Follow.objects.filter(follower=follower, following=following).exists():
+                return Response({'errors': 'Вы уже подписаны!'},
+                                status=status.HTTP_400_BAD_REQUEST)
             serializer = FollowSerializer(
                 data=request.data,
                 context={'request': request, 'following': following}
             )
-            if serializer.is_valid():
-                serializer.save(following=following, follower=follower)
+            if serializer.is_valid(raise_exception=True):
+                serializer.save(follower=follower, following=following)
                 return Response(serializer.data,
                                 status=status.HTTP_201_CREATED)
         elif request.method == 'DELETE':
-            if Follow.objects.filter(following=following,
-                                     follower=follower).exists():
-                Follow.objects.get(following=following,
-                                   follower=follower).delete()
-                return Response('Успешная отписка',
-                                status=status.HTTP_204_NO_CONTENT)
-            else:
-                return Response(
-                    {'errors': 'Вы не подписаны на этого пользователя!'},
-                    status=status.HTTP_400_BAD_REQUEST
-                )
-
-    def page_subscribe(self, request):
-        queryset = User.objects.filter(follows_user=request.user)
-        page = self.paginate_queryset(queryset)
-        serializer = FollowSerializer(page, many=True,
-                                      context={'request': request})
-        return self.get_paginated_response(serializer.data)
-
+            try:
+                subscription = Follow.objects.get(follower=follower, following=following)
+                subscription.delete()
+                return Response({'detail': 'Успешная отписка'}, status=status.HTTP_204_NO_CONTENT)
+            except Follow.DoesNotExist:
+                return Response({'errors': 'Подписка не существует'}, status=status.HTTP_400_BAD_REQUEST)
+    
     @action(
         methods=['get'],
         detail=False,
@@ -103,9 +101,6 @@ class CustomUserViewSet(UserViewSet):
     )
     def current_subscriptions(self, request):
         """Просмотр страницы подписок"""
-        follows = Follow.objects.filter(follower=self.request.user)
-        pages = self.paginate_queryset(follows)
-        serializer = FollowSerializer(pages,
-                                      many=True,
-                                      context={'request': request})
-        return self.get_paginated_response(serializer.data)
+        subscriptions = Follow.objects.filter(follower=request.user)
+        serializer = FollowSerializer(subscriptions, many=True, context={'request': request})
+        return Response(serializer.data)

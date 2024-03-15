@@ -85,12 +85,14 @@ WSGI_APPLICATION = 'foodgram.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.getenv('POSTGRES_DB', 'foodgram'),
-        'USER': os.getenv('POSTGRES_USER', 'jokedump'),
-        'PASSWORD': os.getenv('POSTGRES_PASSWORD', ''),
-        'HOST': os.getenv('DB_HOST', ''),
-        'PORT': os.getenv('DB_PORT', 5432)
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
+ #       'ENGINE': 'django.db.backends.postgresql',
+  #      'NAME': os.getenv('POSTGRES_DB', 'foodgram'),
+     #   'USER': os.getenv('POSTGRES_USER', 'jokedump'),
+      #  'PASSWORD': os.getenv('POSTGRES_PASSWORD', ''),
+      #  'HOST': os.getenv('DB_HOST', ''),
+      #  'PORT': os.getenv('DB_PORT', 5432)
     }
 }
 
@@ -112,7 +114,6 @@ AUTH_PASSWORD_VALIDATORS = [
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.IsAuthenticatedOrReadOnly',
-        'rest_framework.permissions.IsAuthenticated',
     ],
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.TokenAuthentication',
@@ -171,7 +172,7 @@ DJOSER = {
     },
     'PERMISSIONS': {
         'user_create': ('rest_framework.permissions.AllowAny',),
-        'user_list': ('rest_framework.permissions.AllowAny',),
-        'user': ('rest_framework.permissions.AllowAny',),
+        'user_list': ('rest_framework.permissions.IsAuthenticatedOrReadOnly',),
+        'user': ('rest_framework.permissions.IsAuthenticatedOrReadOnly',),
     },
 }

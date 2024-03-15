@@ -3,13 +3,16 @@ from django.conf.urls.static import static
 from django.urls import include, path
 from rest_framework.routers import DefaultRouter
 
-from users.views import CustomUserViewSet
+from .views import CustomUserViewSet, FollowViewSet
 
 app_name = 'users'
 
 router = DefaultRouter()
 
 router.register(r'users', CustomUserViewSet, basename='users')
+router.register(r'users/(?P<post_pk>\d+)/subscribe',
+                FollowViewSet,
+                basename='follows')
 
 
 urlpatterns = [

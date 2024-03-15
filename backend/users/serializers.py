@@ -69,9 +69,9 @@ class FollowSerializer(serializers.ModelSerializer):
     username = serializers.ReadOnlyField(source='following.username')
     first_name = serializers.ReadOnlyField(source='following.first_name')
     last_name = serializers.ReadOnlyField(source='following.last_name')
-    is_subscribed = serializers.SerializerMethodField()
-    recipes = serializers.SerializerMethodField()
-    recipes_count = serializers.SerializerMethodField()
+  #  is_subscribed = serializers.SerializerMethodField()
+  #  recipes = serializers.SerializerMethodField()
+   # recipes_count = serializers.SerializerMethodField()
 
     class Meta:
         model = Follow
@@ -79,12 +79,13 @@ class FollowSerializer(serializers.ModelSerializer):
                   'id',
                   'username',
                   'first_name',
-                  'last_name',
-                  'is_subscribed',
-                  'recipes',
-                  'recipes_count',)
+                  'last_name',)
+    #              'is_subscribed',)
+    #              'recipes',
+     #             'recipes_count',)
 
     def validate(self, data):
+        breakpoint()
         following = self.context.get('following')
         follower = self.context.get('request').user
         if follower == following:
@@ -97,11 +98,11 @@ class FollowSerializer(serializers.ModelSerializer):
             raise ValidationError(
                 {'errors': 'Вы уже подписаны на этого пользователя!'},
             )
-        super().validate(data)
+      #  super().validate(data)
         return data
 
     def validate_following(self, value):
-        if self.context['request'].user == value:
+        if self.context.get('request').user == value:
             raise ValidationError(
                 'Вы не можете подписаться на себя!')
         return value
@@ -114,13 +115,13 @@ class FollowSerializer(serializers.ModelSerializer):
                 following=obj.follower).exists()
         return False
 
-    def get_recipes_count(self, obj):
-        return Recipe.objects.filter(author=obj.following).count()
+ #   def get_recipes_count(self, obj):
+  #      return Recipe.objects.filter(author=obj.following).count()
 
-    def get_recipes(self, obj):
-        request = self.context.get('request')
-        recipes_limit = request.query_params.get('recipes_limit')
-        recipes = Recipe.objects.filter(author=obj.following)
-        if recipes_limit:
-            recipes = recipes[:int(recipes_limit)]
-        return api.serializers.RecipeSerializer(recipes, many=True).data
+ #   def get_recipes(self, obj):
+  #      request = self.context.get('request')
+   #     recipes_limit = request.query_params.get('recipes_limit')
+    #    recipes = Recipe.objects.filter(author=obj.following)
+     #   if recipes_limit:
+      #      recipes = recipes[:int(recipes_limit)]
+       # return api.serializers.RecipeSerializer(recipes, many=True).data

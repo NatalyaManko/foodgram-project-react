@@ -120,11 +120,11 @@ class RecipeViewSet(viewsets.ModelViewSet):
                 return Response(serializer.data,
                                 status=status.HTTP_201_CREATED)
         elif request.method == 'DELETE':
-            favorite_instance = Favorite.objects.filter(
+            favorites = Favorite.objects.filter(
                 user=user, recipe=recipe
             ).first()
-            if favorite_instance:
-                favorite_instance.delete()
+            if favorites:
+                favorites.delete()
                 return Response(
                     {'message': 'Рецепт успешно удален из избранного!'},
                     status=status.HTTP_204_NO_CONTENT
@@ -142,23 +142,27 @@ class ShoppingCartViewSet(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAuthenticated]
 
     @action(methods=['post'], detail=True)
-    def add_to_cart(self, request, pk=None):
-        recipe = get_object_or_404(Recipe, pk=pk)
-        shopping_cart, created = ShoppingCart.objects.get_or_create(
-            user=request.user
-        )
-        if not created and shopping_cart.recipe.filter(
-            id=recipe.id
-        ).exists():
-            return Response(
-                {'detail': 'Этот рецепт уже в вашей корзине.'},
-                status=status.HTTP_400_BAD_REQUEST
-            )
+    def create(self, request, *args, **kwargs):
+        user = request.user
+        recipe_id = request.data.get('recipe_id')
+        
+        # Проверка наличия рецепта
+        try:
+            recipe = Recipe.objects.get(id=recipe_id)
+        except Recipe.DoesNotExist:
+            return Response({'detail': 'Рецепт не найден.'}, status=status.HTTP_404_NOT_FOUND)
+        
+        # Проверка наличия списка покупок у пользователя
+        shopping_cart, created = ShoppingCart.objects.get_or_create(user=user)
+        
+        # Проверка, добавлен ли уже рецепт в список покупок
+        if recipe in shopping_cart.recipe.all():
+            return Response({'detail': 'Рецепт уже добавлен в список покупок.'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        # Добавление рецепта в список покупок пользователя
         shopping_cart.recipe.add(recipe)
-        return Response(
-            {'detail': 'Рецепт добавлен в корзину.'},
-            status=status.HTTP_201_CREATED
-        )
+        serializer = ShoppingCartSerializer(shopping_cart)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     @action(methods=['delete'], detail=True)
     def remove_from_cart(self, request, pk=None):
