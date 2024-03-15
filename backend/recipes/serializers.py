@@ -1,13 +1,28 @@
 import base64
 
+import webcolors
 from django.conf import settings
 from django.core.files.base import ContentFile
 from rest_framework import serializers
 
-from recipes.models import Ingredient, Recipe, RecipeIngredient
+from recipes.models import Recipe, RecipeIngredient
 from tags.models import Tag
 from tags.serializers import TagSerializer
 from users.serializers import UserSerializer
+
+
+class Hex2NameColor(serializers.Field):
+    """Сериализатор конвертации кода цвета в hex-формате"""
+
+    def to_representation(self, value):
+        return value
+
+    def to_internal_value(self, data):
+        try:
+            data = webcolors.hex_to_name(data)
+        except ValueError:
+            raise serializers.ValidationError('Для этого цвета нет имени')
+        return data
 
 
 class Base64ImageField(serializers.ImageField):
@@ -34,8 +49,7 @@ class RecipeIngredientSerializer(serializers.ModelSerializer):
 
 
 class RecipeIngredientSimpleSerializer(serializers.ModelSerializer):
-    id = serializers.PrimaryKeyRelatedField(
-        source='ingredient.id', queryset=Ingredient.objects.all())
+    id = serializers.IntegerField()
     amount = serializers.IntegerField(
         min_value=settings.MIN_SMALL_NUMBER,
         max_value=settings.MAX_SMALL_NUMBER)
@@ -100,13 +114,10 @@ class RecipeAddChangeSerializer(serializers.ModelSerializer):
     def create_ingredients(self, recipe, ingredients):
         bulk_list = list()
         for ingredient in ingredients:
-            recipe_ingredient = RecipeIngredient.objects.create(
+            bulk_list.append(RecipeIngredient(
                 recipe=recipe,
-                ingredient=ingredient['id'],
-                amount=ingredient['amount']
-            )
-            bulk_list.append(recipe_ingredient)
-        RecipeIngredient.objects.bulk_create(bulk_list)
+                ingredient=ingredient['ingredient']['id'],
+                amount=ingredient['amount']))
 
     def create(self, validated_data):
         ingredients = validated_data.pop('ingredients_in_recipe')
