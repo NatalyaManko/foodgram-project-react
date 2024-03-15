@@ -1,12 +1,13 @@
 from collections import defaultdict
 
-from django.core.exceptions import ObjectDoesNotExist
+from django.core.exceptions import ObjectDoesNotExist, PermissionDenied
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters, serializers, status, viewsets
 from rest_framework.decorators import action
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import (IsAuthenticated,
+                                        IsAuthenticatedOrReadOnly)
 from rest_framework.response import Response
 
 from recipes.filters import RecipeFilter
@@ -14,7 +15,6 @@ from recipes.models import (Recipe,
                             RecipeIngredient,
                             UserFavorite,
                             UserShoppingCart)
-from recipes.permissions import IsOwnerOrReadOnly
 from recipes.serializers import (RecipeAddChangeSerializer,
                                  RecipeSerializer,
                                  RecipeSimpleSerializer)
@@ -22,7 +22,7 @@ from recipes.serializers import (RecipeAddChangeSerializer,
 
 class RecipeViewSet(viewsets.ModelViewSet):
     queryset = Recipe.objects.all()
-    permission_classes = (IsOwnerOrReadOnly,)
+    permission_classes = (IsAuthenticatedOrReadOnly,)
     filter_backends = (DjangoFilterBackend, filters.SearchFilter, )
     search_fields = ('^name', )
     filterset_class = RecipeFilter
@@ -31,6 +31,12 @@ class RecipeViewSet(viewsets.ModelViewSet):
         if self.request.method in ('POST', 'PATCH'):
             return RecipeAddChangeSerializer
         return RecipeSerializer
+
+    def perform_update(self, serializer, **kwargs):
+        user = self.request.user
+        if Recipe.objects.get(id=self.kwargs.get('pk')).author != user:
+            raise PermissionDenied('Изменение чужого контента запрещено!')
+        super().perform_update(serializer)
 
     @action(('post', 'delete'), detail=True,
             permission_classes=(IsAuthenticated,))
