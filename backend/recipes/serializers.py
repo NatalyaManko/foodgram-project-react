@@ -1,6 +1,7 @@
 import base64
 
 from django.conf import settings
+from django.core.exceptions import ObjectDoesNotExist
 from django.core.files.base import ContentFile
 from rest_framework import serializers
 
@@ -97,12 +98,21 @@ class RecipeAddChangeSerializer(serializers.ModelSerializer):
                   'cooking_time', 'tags', 'author')
 
     def create_ingredients(self, recipe, ingredients):
-        bulk_list = list()
         for ingredient in ingredients:
-            bulk_list.append(RecipeIngredient(
-                recipe=recipe,
+            amount = ingredient['amount']
+            try:
+                ingredient = Ingredient.objects.get(
+                    id=ingredient['id']
+                )
+            except ObjectDoesNotExist:
+                raise serializers.ValidationError(
+                    {'detail': 'Такой ингредиент не существует!'}
+                )
+            RecipeIngredient.objects.create(
                 ingredient=ingredient,
-                amount=ingredient['amount']))
+                recipe=recipe,
+                amount=amount
+            )
 
     def create(self, validated_data):
         ingredients = validated_data.pop('ingredients_in_recipe')
