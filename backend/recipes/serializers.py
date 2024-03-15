@@ -49,7 +49,8 @@ class RecipeIngredientSerializer(serializers.ModelSerializer):
 
 
 class RecipeIngredientSimpleSerializer(serializers.ModelSerializer):
-    id = serializers.PrimaryKeyRelatedField(queryset=Ingredient.objects.all())
+    id = serializers.PrimaryKeyRelatedField(
+        source='ingredient.id', queryset=Ingredient.objects.all())
     amount = serializers.IntegerField(
         min_value=settings.MIN_SMALL_NUMBER,
         max_value=settings.MAX_SMALL_NUMBER)
@@ -111,19 +112,13 @@ class RecipeAddChangeSerializer(serializers.ModelSerializer):
         fields = ('name', 'text', 'ingredients', 'image',
                   'cooking_time', 'tags', 'author')
 
-    def create_ingredients(self, recipe, ingredients_data):
-        bulk_list = []
-        for ingredient_data in ingredients_data:
-            ingredient_id = ingredient_data['ingredient']['id']
-            ingredient_obj = Ingredient.objects.get(id=ingredient_id)
-            amount = ingredient_data['amount']
-            recipe_ingredient = RecipeIngredient(
+    def create_ingredients(self, recipe, ingredients):
+        bulk_list = list()
+        for ingredient in ingredients:
+            bulk_list.append(RecipeIngredient(
                 recipe=recipe,
-                ingredient=ingredient_obj,
-                amount=amount
-            )
-        bulk_list.append(recipe_ingredient)
-        RecipeIngredient.objects.bulk_create(bulk_list)
+                ingredient=ingredient['ingredient']['id'],
+                amount=ingredient['amount']))
 
     def create(self, validated_data):
         ingredients = validated_data.pop('ingredients_in_recipe')
@@ -154,33 +149,14 @@ class RecipeAddChangeSerializer(serializers.ModelSerializer):
 
     def validate_ingredients(self, value):
         if not value:
-            raise serializers.ValidationError('Пустой список ингредиентов.')
-        unique_ingredient_ids = set()
-        for ingredient_data in value:
-            ingredient_id = ingredient_data.get('id')
-            amount = ingredient_data.get('amount')
-
-            if ingredient_id is None:
-                raise serializers.ValidationError(
-                    'ID ингредиента обязательно.'
-                )
-
-            if amount is None:
-                raise serializers.ValidationError(
-                    'Количество ингредиента обязательно.'
-                )
-
-            if amount <= 0:
-                raise serializers.ValidationError(
-                    'Количество каждого ингредиента должно быть больше нуля.'
-                )
-
-            unique_ingredient_ids.add(ingredient_id)
-
-        if len(value) != len(unique_ingredient_ids):
             raise serializers.ValidationError(
-                'Ингредиенты должны быть уникальными.'
-            )
+                {'ingredients': 'Пустой список.'})
+
+        unique_ids = set([ingredient['ingredient']['id'].id
+                          for ingredient in value])
+        if len(value) != len(unique_ids):
+            raise serializers.ValidationError(
+                {'ingredients': 'Значения должны быть уникальны.'})
 
         return value
 
