@@ -102,7 +102,7 @@ class RecipeAddChangeSerializer(serializers.ModelSerializer):
         for ingredient in ingredients:
             bulk_list.append(RecipeIngredient(
                 recipe=recipe,
-                ingredient=ingredient['ingredient'],
+                ingredient=ingredient['ingredient']['id'],
                 amount=ingredient['amount']))
 
     def create(self, validated_data):
