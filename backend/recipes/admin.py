@@ -7,10 +7,27 @@ from recipes.models import (Recipe,
                             UserShoppingCart)
 
 
+class RecipeIngredientInline(admin.StackedInline):
+    model = RecipeIngredient
+    extra = 0
+
+
+class RecipeTagInline(admin.StackedInline):
+    model = RecipeTag
+    extra = 0
+
+
 @admin.register(Recipe)
 class RecipeAdmin(admin.ModelAdmin):
-    list_display = ('name', 'author',)
-    list_filter = ('name', 'tags', 'author')
+    inlines = (RecipeIngredientInline,
+               RecipeTagInline,)
+    list_display = ('id',
+                    'name',
+                    'author',
+                    'favorite_count')
+    list_editable = ('name', 'author',)
+    search_fields = ('name',)
+    list_filter = ('name', 'author', 'tags')
     readonly_fields = ('favorites_count',)
 
     @admin.display(description='Любим')
