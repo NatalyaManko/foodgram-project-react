@@ -1,0 +1,39 @@
+version: '3'
+
+volumes:
+  food_data_production:
+  food_media_volume:
+  static_volume:
+
+services:
+  db:
+    image: postgres:13
+    env_file: .env
+    volumes:
+      - food_data_production:/var/lib/postgresql/data
+  backend:
+    image: natalamanko/foodgram_backend:latest
+    env_file: .env
+    volumes:
+      - static_volume:/backend_static
+      - food_media_volume:/app/media
+    depends_on:
+      - db
+  frontend:
+    image: natalamanko/foodgram_frontend:latest
+    env_file: .env
+    command: cp -r /app/build/. /frontend_static/
+    volumes:
+      - static_volume:/frontend_static
+    depends_on:
+      - backend
+  gateway:
+    image: natalamanko/foodgram_gateway:latest
+    env_file: .env
+    volumes:
+      - static_volume:/static
+      - food_media_volume:/media
+    depends_on:
+      - frontend
+    ports:
+      - 8000:80
