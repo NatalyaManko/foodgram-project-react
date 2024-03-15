@@ -15,13 +15,10 @@ class Command(BaseCommand):
         print(f'Use path: {options["path"]}')
 
         filename = 'ingredients.csv'
-        print(f'Load file {filename}')
         with open(f'{options["path"]}/{filename}', encoding='utf-8') as f:
             reader = csv.reader(f)
             for ingredient_name, unit_name in reader:
-                print(ingredient_name)
                 unit, status = Unit.objects.get_or_create(name=unit_name)
-                print(unit)
                 Ingredient.objects.get_or_create(name=ingredient_name,
                                                  measurement_unit=unit)
 

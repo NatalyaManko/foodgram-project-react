@@ -1,6 +1,9 @@
 import os
 from pathlib import Path
 
+from dotenv import load_dotenv
+
+load_dotenv()
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -21,7 +24,7 @@ SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-s^h5#tajnn65vhu(rg@rw7c-sf
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '').split()
+ALLOWED_HOSTS = ['158.160.79.149', '127.0.0.1', 'localhost', 'gurman.myftp.biz']
 
 REST_FRAMEWORK = {
 
