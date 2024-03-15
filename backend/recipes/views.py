@@ -1,6 +1,6 @@
 from collections import defaultdict
 
-from django.core.exceptions import ObjectDoesNotExist, PermissionDenied
+from django.core.exceptions import ObjectDoesNotExist
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
@@ -31,12 +31,6 @@ class RecipeViewSet(viewsets.ModelViewSet):
         if self.request.method in ('POST', 'PATCH'):
             return RecipeAddChangeSerializer
         return RecipeSerializer
-
-    def perform_update(self, serializer, **kwargs):
-        user = self.request.user
-        if Recipe.objects.get(id=self.kwargs.get('pk')).author != user:
-            raise PermissionDenied('Изменение чужого контента запрещено!')
-        super().perform_update(serializer)
 
     @action(('post', 'delete'), detail=True,
             permission_classes=(IsAuthenticated,))

@@ -100,10 +100,13 @@ class RecipeAddChangeSerializer(serializers.ModelSerializer):
     def create_ingredients(self, recipe, ingredients):
         bulk_list = list()
         for ingredient in ingredients:
-            bulk_list.append(RecipeIngredient(
+            recipe_ingredient = RecipeIngredient.objects.create(
                 recipe=recipe,
-                ingredient=ingredient['ingredient']['id'],
-                amount=ingredient['amount']))
+                ingredient=ingredient['id'],
+                amount=ingredient['amount']
+            )
+            bulk_list.append(recipe_ingredient)
+        RecipeIngredient.objects.bulk_create(bulk_list)
 
     def create(self, validated_data):
         ingredients = validated_data.pop('ingredients_in_recipe')
