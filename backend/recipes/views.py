@@ -36,7 +36,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
         user = self.request.user
         if Recipe.objects.get(id=self.kwargs.get('pk')).author != user:
             raise PermissionDenied('Изменение чужого контента запрещено!')
-        super().perform_update()
+        super().perform_update(serializer)
 
     def perform_destroy(self, instance):
         user = self.request.user
