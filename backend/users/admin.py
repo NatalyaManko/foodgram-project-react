@@ -1,6 +1,6 @@
 from django.contrib.auth.admin import UserAdmin
 
-UserAdmin.list_filter += ('username', 'email',)
+UserAdmin.list_filter = ('username', 'email',)
 UserAdmin.list_display += ('id',
                            'username',
                            'email',
@@ -17,4 +17,4 @@ UserAdmin.list_editable += ('username',
                             'password',
                             'is_staff',
                             'is_active',)
-UserAdmin.list_display_links = None
+UserAdmin.list_display_links += ()

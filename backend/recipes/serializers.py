@@ -132,19 +132,6 @@ class RecipeAddChangeSerializer(serializers.ModelSerializer):
     def to_representation(self, value):
         return RecipeSerializer(value).data
 
-    def validate_ingredients(self, value):
-        if not value:
-            raise serializers.ValidationError(
-                {'ingredients': 'Пустой список.'})
-
-        unique_ids = set([ingredient.id
-                          for ingredient in value])
-        if len(value) != len(unique_ids):
-            raise serializers.ValidationError(
-                {'ingredients': 'Значения должны быть уникальны.'})
-
-        return value
-
     def validate_tags(self, value):
         if not value:
             raise serializers.ValidationError({'tags': 'Пустой список.'})
