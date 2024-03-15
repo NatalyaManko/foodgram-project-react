@@ -99,7 +99,7 @@ class RecipeSerializer(serializers.ModelSerializer):
 class RecipeAddChangeSerializer(serializers.ModelSerializer):
     image = Base64ImageField()
     author = UserSerializer(read_only=True)
-    ingredients = RecipeIngredientSimpleSerializer(
+    ingredients = RecipeIngredientSerializer(
         source='ingredients_in_recipe', many=True)
     tags = serializers.PrimaryKeyRelatedField(
         queryset=Tag.objects.all(), many=True)
