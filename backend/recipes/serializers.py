@@ -1,6 +1,5 @@
 import base64
 
-import webcolors
 from django.conf import settings
 from django.core.files.base import ContentFile
 from rest_framework import serializers
@@ -9,20 +8,6 @@ from recipes.models import Ingredient, Recipe, RecipeIngredient
 from tags.models import Tag
 from tags.serializers import TagSerializer
 from users.serializers import UserSerializer
-
-
-class Hex2NameColor(serializers.Field):
-    """Сериализатор конвертации кода цвета в hex-формате"""
-
-    def to_representation(self, value):
-        return value
-
-    def to_internal_value(self, data):
-        try:
-            data = webcolors.hex_to_name(data)
-        except ValueError:
-            raise serializers.ValidationError('Для этого цвета нет имени')
-        return data
 
 
 class Base64ImageField(serializers.ImageField):
@@ -99,7 +84,7 @@ class RecipeSerializer(serializers.ModelSerializer):
 class RecipeAddChangeSerializer(serializers.ModelSerializer):
     image = Base64ImageField()
     author = UserSerializer(read_only=True)
-    ingredients = RecipeIngredientSerializer(
+    ingredients = RecipeIngredientSimpleSerializer(
         source='ingredients_in_recipe', many=True)
     tags = serializers.PrimaryKeyRelatedField(
         queryset=Tag.objects.all(), many=True)
@@ -152,7 +137,7 @@ class RecipeAddChangeSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError(
                 {'ingredients': 'Пустой список.'})
 
-        unique_ids = set([ingredient['ingredient']['id'].id
+        unique_ids = set([ingredient['id']
                           for ingredient in value])
         if len(value) != len(unique_ids):
             raise serializers.ValidationError(
