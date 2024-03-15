@@ -98,17 +98,12 @@ class RecipeAddChangeSerializer(serializers.ModelSerializer):
                   'cooking_time', 'tags', 'author')
 
     def create_ingredients(self, recipe, ingredients):
-        bulk_list = []
-        for ingredient_data in ingredients:
-            ingredient_id = ingredient_data['ingredient']['id']
-            ingredient_obj = Ingredient.objects.get(id=ingredient_id)
-            bulk_list.append(
-                RecipeIngredient(
-                    recipe=recipe,
-                    ingredient=ingredient_obj,
-                    amount=ingredient_data['amount']
-                )
-            )
+        bulk_list = list()
+        for ingredient in ingredients:
+            bulk_list.append(RecipeIngredient(
+                recipe=recipe,
+                ingredient=ingredient['ingredient']['id'],
+                amount=ingredient['amount']))
         RecipeIngredient.objects.bulk_create(bulk_list)
 
     def create(self, validated_data):
