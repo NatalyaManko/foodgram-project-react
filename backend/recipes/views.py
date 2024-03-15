@@ -31,6 +31,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
         if self.request.method in ('POST', 'PATCH'):
             return RecipeAddChangeSerializer
         return RecipeSerializer
+
     def perform_update(self, serializer, **kwargs):
         user = self.request.user
         if Recipe.objects.get(id=self.kwargs.get('pk')).author != user:
