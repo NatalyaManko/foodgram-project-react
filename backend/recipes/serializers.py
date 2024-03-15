@@ -101,13 +101,14 @@ class RecipeAddChangeSerializer(serializers.ModelSerializer):
         bulk_list = []
         for ingredient_data in ingredients:
             ingredient_id = ingredient_data['ingredient']['id']
-            amount = ingredient_data['amount']
-            recipe_ingredient = RecipeIngredient(
-                recipe=recipe,
-                ingredient_id=ingredient_id,
-                amount=amount
+            ingredient_obj = Ingredient.objects.get(id=ingredient_id)
+            bulk_list.append(
+                RecipeIngredient(
+                    recipe=recipe,
+                    ingredient=ingredient_obj,
+                    amount=ingredient_data['amount']
+                )
             )
-            bulk_list.append(recipe_ingredient)
         RecipeIngredient.objects.bulk_create(bulk_list)
 
     def create(self, validated_data):
