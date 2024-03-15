@@ -1,6 +1,6 @@
 from collections import defaultdict
 
-from django.core.exceptions import ObjectDoesNotExist
+from django.core.exceptions import ObjectDoesNotExist, PermissionDenied
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
@@ -31,6 +31,26 @@ class RecipeViewSet(viewsets.ModelViewSet):
         if self.request.method in ('POST', 'PATCH'):
             return RecipeAddChangeSerializer
         return RecipeSerializer
+    def perform_update(self, serializer, **kwargs):
+        user = self.request.user
+        if Recipe.objects.get(id=self.kwargs.get('pk')).author != user:
+            raise PermissionDenied('Изменение чужого контента запрещено!')
+        super().perform_update(serializer)
+
+    def perform_destroy(self, instance):
+        user = self.request.user
+        try:
+            recipe = Recipe.objects.get(id=self.kwargs.get('pk'))
+            if recipe.author != user:
+                raise PermissionDenied(
+                    'У вас нет прав для удаления этого рецепта.'
+                )
+            recipe.delete()
+            return Response('Успешное удаление!',
+                            status=status.HTTP_204_NO_CONTENT)
+        except ObjectDoesNotExist:
+            return Response({'errors': 'Рецепт не найден!'},
+                            status=status.HTTP_404_NOT_FOUND)
 
     @action(('post', 'delete'), detail=True,
             permission_classes=(IsAuthenticated,))

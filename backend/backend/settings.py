@@ -22,7 +22,7 @@ MAX_SMALL_NUMBER = 32000
 SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-s^h5#tajnn65vhu(rg@rw7c-sf@r8bsqcq=r@gwh4m9d1h0nvb')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ['158.160.79.149', '127.0.0.1', 'localhost', 'gurman.myftp.biz']
 
