@@ -1,6 +1,4 @@
-from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
-from django.contrib.auth.models import Group
 
 UserAdmin.list_filter = ('username', 'email',)
 UserAdmin.list_display += ('id',
@@ -20,6 +18,3 @@ UserAdmin.list_editable += ('username',
                             'is_staff',
                             'is_active',)
 UserAdmin.list_display_links = ('id',)
-
-
-admin.site.register(Group)
