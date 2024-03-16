@@ -17,3 +17,4 @@ UserAdmin.list_editable += ('username',
                             'password',
                             'is_staff',
                             'is_active',)
+UserAdmin.list_display_links = ('id',)
