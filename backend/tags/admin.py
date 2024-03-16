@@ -10,8 +10,12 @@ class TagAdmin(admin.ModelAdmin):
 
     list_display = ('id', 'name', 'slug', 'color',)
     list_editable = ('name', 'slug', 'color',)
+
     formfield_overrides = {
-        models.CharField: {'widget': widgets.TextInput(
-            attrs={'type': 'color'})
-        },
+        models.CharField: {'widget': widgets.TextInput},
     }
+
+    def formfield_for_dbfield(self, db_field, **kwargs):
+        if db_field.name == 'color':
+            kwargs['widget'] = widgets.TextInput(attrs={'type': 'color'})
+        return super().formfield_for_dbfield(db_field, **kwargs)
