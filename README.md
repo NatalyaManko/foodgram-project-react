@@ -156,3 +156,10 @@ webcolors==1.11.1
 Наталья Манько
 eMail: manko.nat@mail.ru, natalamanko955@gmail.com
 Телефон: +7 913 900 23 23
+## Для ревью
+Суперпользователь:
+superuser
+пароль ZuMaISbest
+Администратор:
+admin
+ZUMA1234
