@@ -5,6 +5,10 @@ from ingredients.serializers import IngredientSerializer
 
 
 class IngredientViewSet(viewsets.ReadOnlyModelViewSet):
+    """
+    API endpoint для просмотра ингредиентов.
+    """
+
     http_method_names = ('get', )
     queryset = Ingredient.objects.all()
     serializer_class = IngredientSerializer

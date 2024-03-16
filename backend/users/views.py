@@ -15,21 +15,36 @@ User = get_user_model()
 
 
 class UserViewSet(viewsets.ModelViewSet):
+    """
+    API endpoint для пользователей.
+    """
+
     queryset = User.objects.all()
     permission_classes = (AllowAny,)
 
     def get_serializer_class(self):
+        """
+        Получить класс сериализатора в зависимости от типа запроса.
+        Возвращает:
+            Класс сериализатора.
+        """
         if self.request.method in ('POST',):
             return UserCreateSerializer
         return UserSerializer
 
     @action(('get',), detail=False, permission_classes=(IsAuthenticated,))
     def me(self, request):
+        """
+        Получение информации о текущем пользователе.
+        """
         return Response(UserSerializer(request.user).data,
                         status=status.HTTP_200_OK)
 
     @action(("post",), detail=False, permission_classes=(IsAuthenticated,))
     def set_password(self, request, *args, **kwargs):
+        """
+        Установка нового пароля для текущего пользователя.
+        """
         serializer = PasswordSerializer(data=request.data,
                                         context={"request": self.request})
         serializer.is_valid(raise_exception=True)
@@ -42,6 +57,9 @@ class UserViewSet(viewsets.ModelViewSet):
     @action(("post", 'delete'), detail=True,
             permission_classes=(IsAuthenticated,))
     def subscribe(self, request, *args, **kwargs):
+        """
+        Подписка или отписка текущего пользователя на другого пользователя.
+        """
         author = get_object_or_404(User, id=kwargs['pk'])
         user = request.user
 

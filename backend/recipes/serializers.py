@@ -11,6 +11,8 @@ from users.serializers import UserSerializer
 
 
 class Base64ImageField(serializers.ImageField):
+    """Сериализатор декодирования изображения"""
+
     def to_internal_value(self, data):
         if isinstance(data, str) and data.startswith('data:image'):
             format, imgstr = data.split(';base64,')
@@ -23,6 +25,8 @@ class Base64ImageField(serializers.ImageField):
 
 
 class RecipeIngredientSerializer(serializers.ModelSerializer):
+    """Связной сериализатор Ингредиентов с количеством для Рецептов"""
+
     id = serializers.ReadOnlyField(source='ingredient.id')
     name = serializers.ReadOnlyField(source='ingredient.name')
     measurement_unit = serializers.ReadOnlyField(
@@ -34,6 +38,8 @@ class RecipeIngredientSerializer(serializers.ModelSerializer):
 
 
 class RecipeIngredientSimpleSerializer(serializers.ModelSerializer):
+    """Сериализатор Ингредиентов с количеством для создания рецептов"""
+
     id = serializers.PrimaryKeyRelatedField(
         source='ingredient.id', queryset=Ingredient.objects.all())
     amount = serializers.IntegerField(
@@ -46,7 +52,7 @@ class RecipeIngredientSimpleSerializer(serializers.ModelSerializer):
 
 
 class RecipeSimpleSerializer(serializers.ModelSerializer):
-    """Only for subscriptions, favorites and shopping cart display."""
+    """Сериализатор Рецептов для подписок"""
 
     class Meta:
         model = Recipe
@@ -54,6 +60,8 @@ class RecipeSimpleSerializer(serializers.ModelSerializer):
 
 
 class RecipeSerializer(serializers.ModelSerializer):
+    """Сериализатор чтения Рецептa"""
+
     author = UserSerializer(read_only=True)
     ingredients = RecipeIngredientSerializer(
         source='ingredients_in_recipe', read_only=True, many=True)
@@ -82,6 +90,8 @@ class RecipeSerializer(serializers.ModelSerializer):
 
 
 class RecipeAddChangeSerializer(serializers.ModelSerializer):
+    """Сериализатор создания Рецептa"""
+
     image = Base64ImageField()
     author = UserSerializer(read_only=True)
     ingredients = RecipeIngredientSimpleSerializer(

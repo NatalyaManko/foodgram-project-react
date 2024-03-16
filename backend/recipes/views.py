@@ -21,6 +21,10 @@ from recipes.serializers import (RecipeAddChangeSerializer,
 
 
 class RecipeViewSet(viewsets.ModelViewSet):
+    """
+    API endpoint для просмотра, создания, обновления и удаления рецептов.
+    """
+
     queryset = Recipe.objects.all()
     permission_classes = (IsAuthenticatedOrReadOnly,)
     filter_backends = (DjangoFilterBackend, filters.SearchFilter, )
@@ -28,17 +32,28 @@ class RecipeViewSet(viewsets.ModelViewSet):
     filterset_class = RecipeFilter
 
     def get_serializer_class(self):
+        """
+        Получить класс сериализатора в зависимости от типа запроса.
+        Возвращает:
+            Класс сериализатора.
+        """
         if self.request.method in ('POST', 'PATCH'):
             return RecipeAddChangeSerializer
         return RecipeSerializer
 
     def perform_update(self, serializer, **kwargs):
+        """
+        Выполнить обновление рецепта.
+        """
         user = self.request.user
         if Recipe.objects.get(id=self.kwargs.get('pk')).author != user:
             raise PermissionDenied('Изменение чужого контента запрещено!')
         super().perform_update(serializer)
 
     def perform_destroy(self, instance):
+        """
+        Выполнить удаление рецепта.
+        """
         user = self.request.user
         try:
             recipe = Recipe.objects.get(id=self.kwargs.get('pk'))
@@ -56,6 +71,11 @@ class RecipeViewSet(viewsets.ModelViewSet):
     @action(('post', 'delete'), detail=True,
             permission_classes=(IsAuthenticated,))
     def favorite(self, request, **kwargs):
+        """
+        Добавить рецепт в избранное или удалить из избранного.
+        Возвращает:
+            Ответ с данными о рецепте или информацией об успешном удалении.
+        """
         user = request.user
 
         if request.method == 'POST':
@@ -88,6 +108,11 @@ class RecipeViewSet(viewsets.ModelViewSet):
     @action(('post', 'delete'), detail=True,
             permission_classes=(IsAuthenticated,))
     def shopping_cart(self, request, **kwargs):
+        """
+        Добавить рецепт в список покупок или удалить из списка покупок.
+        Возвращает:
+            Ответ с данными о рецепте или информацией об успешном удалении.
+        """
         user = request.user
 
         if request.method == 'POST':
@@ -117,7 +142,11 @@ class RecipeViewSet(viewsets.ModelViewSet):
 
     @action(('get',), detail=False, permission_classes=(IsAuthenticated,))
     def download_shopping_cart(self, request):
-
+        """
+        Скачать список покупок в виде текстового файла.
+        Возвращает:
+            Ответ с текстовым файлом для скачивания.
+        """
         ingredients_list = RecipeIngredient.objects.filter(
             recipe__users_add_recipe__user=request.user)
 

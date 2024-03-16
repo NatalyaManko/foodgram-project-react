@@ -5,6 +5,10 @@ from tags.serializers import TagSerializer
 
 
 class TagViewSet(viewsets.ReadOnlyModelViewSet):
+    """
+    API endpoint для просмотра тегов.
+    """
+
     queryset = Tag.objects.all()
     serializer_class = TagSerializer
     filter_backends = (filters.SearchFilter, )
