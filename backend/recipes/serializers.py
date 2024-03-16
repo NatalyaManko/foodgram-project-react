@@ -146,7 +146,7 @@ class RecipeAddChangeSerializer(serializers.ModelSerializer):
     def validate_ingredients(self, value):
         if not value:
             raise serializers.ValidationError(
-                {'ingredients': 'Пустой список.'})
+                {'ingredients': 'Выберите ингредиент.'})
 
         unique_ids = set([ingredient['ingredient']['id'].id
                           for ingredient in value])
@@ -158,7 +158,7 @@ class RecipeAddChangeSerializer(serializers.ModelSerializer):
 
     def validate_tags(self, value):
         if not value:
-            raise serializers.ValidationError({'tags': 'Пустой список.'})
+            raise serializers.ValidationError({'tags': 'Выберите таг.'})
 
         if len(value) != len(set([tag.id for tag in value])):
             raise serializers.ValidationError(
