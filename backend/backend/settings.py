@@ -19,7 +19,7 @@ MAX_SMALL_NUMBER = 32000
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-s^h5#tajnn65vhu(rg@rw7c-sf@r8bsqcq=r@gwh4m9d1h0nvb')
+SECRET_KEY = os.getenv('SECRET_KEY', 'key')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
