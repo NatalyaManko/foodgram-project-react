@@ -43,7 +43,11 @@ REST_FRAMEWORK = {
 
 DJOSER = {
     'LOGIN_FIELD': 'email',
-
+    'PERMISSIONS': {
+        'user_create': ('rest_framework.permissions.AllowAny',),
+        'user_list': ('rest_framework.permissions.IsAuthenticatedOrReadOnly',),
+        'user': ('rest_framework.permissions.IsAuthenticatedOrReadOnly',),
+    },
 }
 
 
