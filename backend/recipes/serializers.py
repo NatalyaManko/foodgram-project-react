@@ -148,9 +148,7 @@ class RecipeAddChangeSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError(
                 {'ingredients': 'Добавьте ингредиент.'})
 
-        unique_ids = set([ingredient['ingredient']['id'].id
-                          for ingredient in value])
-        if len(value) != len(unique_ids):
+        if len(value) != len(set([ingredient.id for ingredient in value])):
             raise serializers.ValidationError(
                 {'ingredients': 'Значения должны быть уникальны.'})
 
