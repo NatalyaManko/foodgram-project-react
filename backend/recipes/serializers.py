@@ -4,7 +4,7 @@ from django.conf import settings
 from django.core.files.base import ContentFile
 from rest_framework import serializers
 
-from recipes.models import Ingredient, Recipe, RecipeIngredient
+from recipes.models import Recipe, RecipeIngredient
 from tags.models import Tag
 from tags.serializers import TagSerializer
 from users.serializers import UserSerializer
@@ -51,7 +51,7 @@ class RecipeIngredientSimpleSerializer(serializers.ModelSerializer):
 
 
 class RecipeSimpleSerializer(serializers.ModelSerializer):
-    """Only for subscriptions, favorites and shopping cart display."""
+    """Сериализатор Рецепта для подписок"""
 
     class Meta:
         model = Recipe
@@ -59,6 +59,8 @@ class RecipeSimpleSerializer(serializers.ModelSerializer):
 
 
 class RecipeSerializer(serializers.ModelSerializer):
+    """Сериализатор чтения Рецепта"""
+
     author = UserSerializer(read_only=True)
     ingredients = RecipeIngredientSerializer(
         source='ingredients_in_recipe', read_only=True, many=True)
@@ -87,6 +89,8 @@ class RecipeSerializer(serializers.ModelSerializer):
 
 
 class RecipeAddChangeSerializer(serializers.ModelSerializer):
+    """Сериализатор создания Рецепта"""
+
     image = Base64ImageField()
     author = UserSerializer(read_only=True)
     ingredients = RecipeIngredientSimpleSerializer(
@@ -102,7 +106,8 @@ class RecipeAddChangeSerializer(serializers.ModelSerializer):
         fields = ('name', 'text', 'ingredients', 'image',
                   'cooking_time', 'tags', 'author')
 
-    def create_ingredients(self, recipe, ingredients):
+    @staticmethod
+    def _create_ingredients(self, recipe, ingredients):
         bulk_list = list()
         for ingredient in ingredients:
             bulk_list.append(RecipeIngredient(
@@ -118,7 +123,7 @@ class RecipeAddChangeSerializer(serializers.ModelSerializer):
         recipe = Recipe.objects.create(
             author=self.context['request'].user, **validated_data)
 
-        self.create_ingredients(recipe, ingredients)
+        self._create_ingredients(recipe, ingredients)
         recipe.tags.set(tags)
 
         return recipe
@@ -141,7 +146,7 @@ class RecipeAddChangeSerializer(serializers.ModelSerializer):
     def validate_ingredients(self, value):
         if not value:
             raise serializers.ValidationError(
-                {'ingredients': 'Пустой список.'})
+                {'ingredients': 'Добавьте ингредиент.'})
 
         unique_ids = set([ingredient['ingredient']['id'].id
                           for ingredient in value])
