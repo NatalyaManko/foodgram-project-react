@@ -135,7 +135,7 @@ class RecipeAddChangeSerializer(serializers.ModelSerializer):
         instance.ingredients.clear()
         instance.tags.clear()
 
-        self.create_ingredients(instance, ingredients)
+        self._create_ingredients(instance, ingredients)
         instance.tags.set(tags)
 
         return super().update(instance, validated_data)
