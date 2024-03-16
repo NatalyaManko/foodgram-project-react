@@ -147,7 +147,7 @@ class RecipeAddChangeSerializer(serializers.ModelSerializer):
         if not value:
             raise serializers.ValidationError(
                 {'ingredients': 'Добавьте ингредиент.'})
-            
+
         ingredients_arr = []
         for item in value:
             if item in ingredients_arr:
@@ -155,7 +155,7 @@ class RecipeAddChangeSerializer(serializers.ModelSerializer):
                     {'ingredients': 'Значения должны быть уникальны.'}
                 )
             ingredients_arr.append(item)
-            
+
         return value
 
     def validate_tags(self, value):

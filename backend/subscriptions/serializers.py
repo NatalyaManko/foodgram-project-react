@@ -5,6 +5,7 @@ from subscriptions.models import Subscription
 
 
 class SubscriptionSerializer(serializers.ModelSerializer):
+    """Сериализатор Подписок"""
     email = serializers.ReadOnlyField(source='author.email')
     id = serializers.ReadOnlyField(source='author.id')
     username = serializers.ReadOnlyField(source='author.username')
