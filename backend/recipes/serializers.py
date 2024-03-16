@@ -11,6 +11,8 @@ from users.serializers import UserSerializer
 
 
 class Base64ImageField(serializers.ImageField):
+    """Сериализатор декодирования изображения"""
+
     def to_internal_value(self, data):
         if isinstance(data, str) and data.startswith('data:image'):
             format, imgstr = data.split(';base64,')
@@ -23,6 +25,8 @@ class Base64ImageField(serializers.ImageField):
 
 
 class RecipeIngredientSerializer(serializers.ModelSerializer):
+    """Связной сериализатор Ингредиентов с количеством для Рецепта"""
+
     id = serializers.ReadOnlyField(source='ingredient.id')
     name = serializers.ReadOnlyField(source='ingredient.name')
     measurement_unit = serializers.ReadOnlyField(
@@ -34,8 +38,9 @@ class RecipeIngredientSerializer(serializers.ModelSerializer):
 
 
 class RecipeIngredientSimpleSerializer(serializers.ModelSerializer):
-    id = serializers.PrimaryKeyRelatedField(
-        source='ingredient.id', queryset=Ingredient.objects.all())
+    """Сериализатор Ингредиента с количеством для создания рецепта """
+
+    id = id = serializers.IntegerField()
     amount = serializers.IntegerField(
         min_value=settings.MIN_SMALL_NUMBER,
         max_value=settings.MAX_SMALL_NUMBER)
