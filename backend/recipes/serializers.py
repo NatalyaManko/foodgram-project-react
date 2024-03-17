@@ -148,9 +148,10 @@ class RecipeAddChangeSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError(
                 {'ingredients': 'Выберите ингредиент.'})
 
-        unique_ids = set([ingredient['ingredient']['id'].id
-                          for ingredient in value])
-        if len(value) != len(unique_ids):
+        ingredient_ids = [ingredient['ingredient']['id'] for ingredient in value]
+        unique_ids = set(ingredient_ids)
+    
+        if len(ingredient_ids) != len(unique_ids):
             raise serializers.ValidationError(
                 {'ingredients': 'Значения должны быть уникальны.'})
 
@@ -170,7 +171,8 @@ class RecipeAddChangeSerializer(serializers.ModelSerializer):
         for field in ('name', 'text', 'cooking_time', 'image',
                       'tags', 'ingredients_in_recipe'):
             if not obj.get(field):
-                raise serializers.ValidationError({f'{field}':
-                                                   'Поле обязательно.'})
+                raise serializers.ValidationError(
+                    f'Поле "{field}" обязательно.'
+                )
 
         return obj
