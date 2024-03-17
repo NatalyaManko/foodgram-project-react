@@ -155,7 +155,8 @@ class RecipeAddChangeSerializer(serializers.ModelSerializer):
 
         if len(ingredient_ids) != len(unique_ids):
             raise serializers.ValidationError(
-                {'ingredients': 'Значения должны быть уникальны.'})
+                'Значения должны быть уникальны.'
+            )
 
         return value
 
@@ -166,7 +167,8 @@ class RecipeAddChangeSerializer(serializers.ModelSerializer):
         unique_tags = set(value)
         if len(value) != len(unique_tags):
             raise serializers.ValidationError(
-                {'tags': 'Значения должны быть уникальными.'})
+                'Значения должны быть уникальными.'
+            )
 
         return value
 
