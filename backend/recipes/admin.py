@@ -23,9 +23,7 @@ class RecipeAdmin(admin.ModelAdmin):
                RecipeTagInline,)
     list_display = ('id',
                     'name',
-                    'author',
-                    'ingredients',
-                    'tags')
+                    'author',)
     list_editable = ('name', 'author',)
     search_fields = ('name',)
     list_filter = ('name', 'author', 'tags')
