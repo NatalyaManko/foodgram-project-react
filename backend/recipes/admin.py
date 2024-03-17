@@ -35,8 +35,10 @@ class RecipeAdmin(admin.ModelAdmin):
 
     def save_model(self, request, obj, form, change):
         if not obj.name:
-            messages.error(request, "Please fill out the 'Name' field.")
+            messages.error(request, 'Пожалуйста, заполните поле "Название".')
             return
+
+        obj.save()
 
         ingredient_ids = set()
         for ingredient in obj.ingredients_in_recipe.all():
