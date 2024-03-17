@@ -149,11 +149,13 @@ class RecipeAddChangeSerializer(serializers.ModelSerializer):
                 {'ingredients': 'Должен быть хотя бы один ингредиент'}
             )
 
-        unique_ids = set([ingredient['ingredient']['id']
-                          for ingredient in value])
-        if len(value) != len(unique_ids):
-            raise serializers.ValidationError(
-                {'ingredients': 'Значения должны быть уникальны.'})
+        ingredients_arr = []
+        for item in value:
+            if item in ingredients_arr:
+                raise serializers.ValidationError(
+                    {'ingredients': 'Ингредиент уже выбран!'}
+                )
+            ingredients_arr.append(item)
 
         return value
 
@@ -167,30 +169,29 @@ class RecipeAddChangeSerializer(serializers.ModelSerializer):
 
         return value
 
-    def validate(self, obj):
+    def validate(self, data):
         for field in ('name', 'text', 'cooking_time', 'image',
                       'tags', 'ingredients_in_recipe'):
-            if not obj.get(field):
+            if not data.get(field):
                 raise serializers.ValidationError(
                     f'{field}: Поле обязательно.'
                 )
 
-        ingredients = obj.get('ingredients_in_recipe', [])
-        tags = obj.get('tags', [])
-        ingredient_ids = set()
-        for ingredient in ingredients:
-            ingredient_id = ingredient['ingredient']['id']
-            if ingredient_id in ingredient_ids:
+        ingredients_arr = []
+        for item in data.get('recipes_ingredients'):
+            if item in ingredients_arr:
                 raise serializers.ValidationError(
                     {'ingredients_in_recipe':
                         'Ингредиенты должны быть уникальными.'}
                 )
-            ingredient_ids.add(ingredient_id)
+            ingredients_arr.append(item)
 
-        tag_ids = set(tag.id for tag in tags)
-        if len(tags) != len(tag_ids):
-            raise serializers.ValidationError(
-                {'tags': 'Теги должны быть уникальными.'}
-            )
+        tag_arr = []
+        for tag in data.get('tags'):
+            if tag in tag_arr:
+                raise serializers.ValidationError(
+                    {'tags': 'Теги должны быть уникальными.'}
+                )
+            tag_arr.append(tag)
 
-        return obj
+        return data
