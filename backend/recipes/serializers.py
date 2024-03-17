@@ -180,4 +180,22 @@ class RecipeAddChangeSerializer(serializers.ModelSerializer):
                     f'Поле "{field}" обязательно.'
                 )
 
+        ingredients = obj.get('ingredients_in_recipe', [])
+        ingredient_ids = set()
+        for ingredient in ingredients:
+            ingredient_id = ingredient['ingredient']['id']
+            if ingredient_id in ingredient_ids:
+                raise serializers.ValidationError(
+                    {'ingredients_in_recipe':
+                        'Ингредиенты должны быть уникальными.'}
+                )
+            ingredient_ids.add(ingredient_id)
+
+        tags = obj.get('tags', [])
+        tag_ids = set(tag.id for tag in tags)
+        if len(tags) != len(tag_ids):
+            raise serializers.ValidationError(
+                {'tags': 'Теги должны быть уникальными.'}
+            )
+
         return obj
