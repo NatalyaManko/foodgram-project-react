@@ -169,29 +169,29 @@ class RecipeAddChangeSerializer(serializers.ModelSerializer):
 
         return value
 
-    def validate(self, data):
+    def validate(self, obj):
         for field in ('name', 'text', 'cooking_time', 'image',
                       'tags', 'ingredients_in_recipe'):
-            if not data.get(field):
+            if not obj.get(field):
                 raise serializers.ValidationError(
-                    f'{field}: Поле обязательно.'
+                    {f'{field}': f'Поле обязательно: {field}.'}
                 )
-
-        ingredients_arr = []
-        for item in data.get('ingredient'):
-            if item in ingredients_arr:
+        ingredients = obj.get('ingredients_in_recipe', [])
+        ingredient_ids = set()
+        for ingredient in ingredients:
+            ingredient_id = ingredient.get('ingredient').get('id')
+            if ingredient_id in ingredient_ids:
                 raise serializers.ValidationError(
-                    {'ingredients':
-                        'Ингредиенты должны быть уникальными.'}
+                    {'ingredients_in_recipe':
+                        'Ингредиенты должны быть уникальны.'}
                 )
-            ingredients_arr.append(item)
+            ingredient_ids.add(ingredient_id)
 
-        tag_arr = []
-        for tag in data.get('tags'):
-            if tag in tag_arr:
-                raise serializers.ValidationError(
-                    {'tags': 'Теги должны быть уникальными.'}
-                )
-            tag_arr.append(tag)
+        tags = obj.get('tags', [])
+        tag_ids = set(tag.id for tag in tags)
+        if len(tags) != len(tag_ids):
+            raise serializers.ValidationError(
+                {'tags': 'Теги должны быть уникальными.'}
+            )
 
-        return data
+        return obj
