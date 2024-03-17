@@ -38,21 +38,19 @@ class RecipeAdmin(admin.ModelAdmin):
             messages.error(request, 'Пожалуйста, заполните поле "Название".')
             return
 
-        obj.save()
+        if not obj.ingredients.exists():
+            messages.error(
+                request,
+                'Пожалуйста, добавьте хотя бы один ингредиент к рецепту.'
+            )
+            return
 
-        ingredient_ids = set()
-        for ingredient in obj.ingredients_in_recipe.all():
-            if ingredient.ingredient_id in ingredient_ids:
-                messages.error(request, 'Ингредиенты должны быть уникальными.')
-                return
-            ingredient_ids.add(ingredient.ingredient_id)
-
-        tag_ids = set()
-        for tag in obj.tags.all():
-            if tag.id in tag_ids:
-                messages.error(request, 'Теги должны быть уникальными.')
-                return
-            tag_ids.add(tag.id)
+        if not obj.tags.exists():
+            messages.error(
+                request,
+                'Пожалуйста, добавьте хотя бы один тег к рецепту.'
+            )
+            return
 
         super().save_model(request, obj, form, change)
         messages.success(request, 'Рецепт успешно создан.')
