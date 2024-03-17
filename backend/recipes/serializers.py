@@ -178,10 +178,10 @@ class RecipeAddChangeSerializer(serializers.ModelSerializer):
                 )
 
         ingredients_arr = []
-        for item in data.get('ingredients_in_recipe'):
+        for item in data.get('ingredient'):
             if item in ingredients_arr:
                 raise serializers.ValidationError(
-                    {'ingredients_in_recipe':
+                    {'ingredients':
                         'Ингредиенты должны быть уникальными.'}
                 )
             ingredients_arr.append(item)
