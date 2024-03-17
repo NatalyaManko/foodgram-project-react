@@ -178,7 +178,7 @@ class RecipeAddChangeSerializer(serializers.ModelSerializer):
                 )
 
         ingredients_arr = []
-        for item in data.get('recipes_ingredients'):
+        for item in data.get('ingredients_in_recipe'):
             if item in ingredients_arr:
                 raise serializers.ValidationError(
                     {'ingredients_in_recipe':
