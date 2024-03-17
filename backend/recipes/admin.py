@@ -1,4 +1,4 @@
-from django.contrib import admin
+from django.contrib import admin, messages
 
 from recipes.models import (Recipe,
                             RecipeIngredient,
@@ -23,7 +23,9 @@ class RecipeAdmin(admin.ModelAdmin):
                RecipeTagInline,)
     list_display = ('id',
                     'name',
-                    'author',)
+                    'author',
+                    'ingredients',
+                    'tags')
     list_editable = ('name', 'author',)
     search_fields = ('name',)
     list_filter = ('name', 'author', 'tags')
@@ -34,8 +36,26 @@ class RecipeAdmin(admin.ModelAdmin):
         return obj.users_like_recipe.count()
 
     def save_model(self, request, obj, form, change):
-        obj.full_clean()
+        if not obj.name:
+            messages.error(request, "Please fill out the 'Name' field.")
+            return
+
+        ingredient_ids = set()
+        for ingredient in obj.ingredients_in_recipe.all():
+            if ingredient.ingredient_id in ingredient_ids:
+                messages.error(request, 'Ингредиенты должны быть уникальными.')
+                return
+            ingredient_ids.add(ingredient.ingredient_id)
+
+        tag_ids = set()
+        for tag in obj.tags.all():
+            if tag.id in tag_ids:
+                messages.error(request, 'Теги должны быть уникальными.')
+                return
+            tag_ids.add(tag.id)
+
         super().save_model(request, obj, form, change)
+        messages.success(request, 'Рецепт успешно создан.')
 
 
 @admin.register(RecipeIngredient)

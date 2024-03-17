@@ -12,7 +12,6 @@ class Command(BaseCommand):
     help = 'Load ingredients and measurement units data from .csv to DB'
 
     def handle(self, *args, **options):
-        print(f'Use path: {options["path"]}')
 
         filename = 'ingredients.csv'
         with open(f'{options["path"]}/{filename}', encoding='utf-8') as f:
@@ -22,7 +21,7 @@ class Command(BaseCommand):
                 Ingredient.objects.get_or_create(name=ingredient_name,
                                                  measurement_unit=unit)
 
-        return 'OK'
+        return True
 
     def add_arguments(self, parser):
         parser.add_argument(
