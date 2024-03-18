@@ -1,5 +1,6 @@
 from django.contrib import admin
-
+from django.core.exceptions import ValidationError
+from django import forms
 from recipes.models import (Recipe,
                             RecipeIngredient,
                             RecipeTag,
@@ -7,14 +8,16 @@ from recipes.models import (Recipe,
                             UserShoppingCart)
 
 
-class RecipeIngredientInline(admin.TabularInline):
-    model = RecipeIngredient
-    extra = 0
-
-
 class RecipeTagInline(admin.TabularInline):
     model = RecipeTag
-    extra = 0
+    extra = 1
+    min_num = 1
+
+
+class RecipeIngredientInline(admin.TabularInline):
+    model = RecipeIngredient
+    extra = 1
+    min_num = 1
 
 
 @admin.register(Recipe)
@@ -24,7 +27,7 @@ class RecipeAdmin(admin.ModelAdmin):
     search_fields = ('name', 'author', 'tags')
     readonly_fields = ('favorites_count',)
 
-    @admin.display(description='Любимые рецепты')
+    @admin.displayd(description='Любимые рецепты')
     def favorites_count(self, obj):
         return obj.users_like_recipe.count()
 
