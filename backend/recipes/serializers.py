@@ -165,7 +165,7 @@ class RecipeAddChangeSerializer(serializers.ModelSerializer):
 
         if len(value) != len(set([tag.id for tag in value])):
             raise serializers.ValidationError(
-                {'tags': 'Значения должны быть уникальным.'})
+                {'tags': 'Значения должны быть уникальными.'})
 
         return value
 
@@ -233,7 +233,7 @@ class RecipeFavoriteSerializer(serializers.ModelSerializer):
 
     def validate(self, data):
         user = self.context['request'].user
-        recipe = self.instance
+        recipe = data.get('recipe')
 
         if not recipe:
             raise serializers.ValidationError({'recipe': 'Рецепт не найден.'})
