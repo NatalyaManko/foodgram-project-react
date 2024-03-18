@@ -9,3 +9,8 @@ admin.site.register(Unit)
 class IngredientAdmin(admin.ModelAdmin):
     list_display = ('name', 'measurement_unit', )
     search_fields = ('name',)
+
+
+@admin.register(Unit)
+class UnitAdmin(admin.ModelAdmin):
+    list_display = ('fuii_name', 'name',)

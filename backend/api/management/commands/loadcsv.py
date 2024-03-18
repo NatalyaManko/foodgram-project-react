@@ -7,7 +7,7 @@ from ingredients.models import Ingredient, Unit
 
 
 class Command(BaseCommand):
-    """Command to load data from csv files to DB."""
+    """Команда для загрузки данных из csv-файлов в базу данных."""
 
     help = 'Load ingredients and measurement units data from .csv to DB'
 

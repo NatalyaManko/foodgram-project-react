@@ -56,7 +56,7 @@ class RecipeIngredient(models.Model):
         verbose_name_plural = 'Ингридиенты рецепта'
 
     def __str__(self):
-        return f'{self.recipe} {self.ingredient}'
+        return f'{self.ingredient} в {self.recipe}'
 
 
 class RecipeTag(models.Model):
@@ -69,7 +69,7 @@ class RecipeTag(models.Model):
         verbose_name_plural = 'Таги рецепта'
 
     def __str__(self):
-        return f'{self.recipe} {self.tag}'
+        return f'{self.tag} для {self.recipe}'
 
 
 class UserFavorite(models.Model):

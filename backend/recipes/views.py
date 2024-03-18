@@ -36,7 +36,20 @@ class RecipeViewSet(viewsets.ModelViewSet):
         """
         if self.request.method in ('POST', 'PATCH'):
             return RecipeAddChangeSerializer
+
         return RecipeSerializer
+
+    def perform_destroy(self, instance):
+        """
+        Выполнить удаление рецепта.
+        """
+        recipe = get_object_or_404(Recipe, id=self.kwargs.get('pk'))
+        recipe.delete()
+
+        return Response(
+            'Успешное удаление!',
+            status=status.HTTP_204_NO_CONTENT
+        )
 
     @action(('post', 'delete'), detail=True,
             permission_classes=(IsAuthenticated,))
@@ -95,5 +108,4 @@ class RecipeViewSet(viewsets.ModelViewSet):
         Возвращает:
         HttpResponse: Ответ с текстовым файлом для скачивания.
         """
-
         return download_shopping_cart(request)
