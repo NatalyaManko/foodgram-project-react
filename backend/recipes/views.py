@@ -56,7 +56,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
 
         serializer = RecipeFavoriteSerializer(
             instance=favorite_item,
-            data=request.data,
+            data={'user': user.pk, 'recipe': recipe.pk},
             context={'request': request, 'user': user}
         )
 
