@@ -1,5 +1,3 @@
-from collections import defaultdict
-
 from django.core.exceptions import ObjectDoesNotExist, PermissionDenied
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
@@ -18,6 +16,8 @@ from recipes.models import (Recipe,
 from recipes.serializers import (RecipeAddChangeSerializer,
                                  RecipeSerializer,
                                  RecipeSimpleSerializer)
+
+from .utils import generate_shopping_list
 
 
 class RecipeViewSet(viewsets.ModelViewSet):
@@ -145,23 +145,13 @@ class RecipeViewSet(viewsets.ModelViewSet):
         """
         Скачать список покупок в виде текстового файла.
         Возвращает:
-            Ответ с текстовым файлом для скачивания.
+        HttpResponse: Ответ с текстовым файлом для скачивания.
         """
         ingredients_list = RecipeIngredient.objects.filter(
-            recipe__users_add_recipe__user=request.user)
+            recipe__users_add_recipe__user=request.user
+        )
 
-        shopping_items = defaultdict(int)
-
-        for ingredient in ingredients_list:
-            shopping_items[ingredient.ingredient] += ingredient.amount
-
-        shopping_items_text = 'СПИСОК ПОКУПОК:\n'
-        shopping_items_text += '\n'.join([f'{i+1}. '
-                                         + f'{ingredient.name} - '
-                                         + f'{shopping_items[ingredient]}, '
-                                         + f'{ingredient.measurement_unit}'
-                                         for i, ingredient
-                                         in enumerate(shopping_items.keys())])
+        shopping_items_text = generate_shopping_list(ingredients_list)
 
         response = HttpResponse(shopping_items_text,
                                 content_type='text/plain,charset=utf8')
