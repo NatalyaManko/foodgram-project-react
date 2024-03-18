@@ -12,6 +12,7 @@ from recipes.filters import RecipeFilter
 from recipes.models import Recipe, UserFavorite, UserShoppingCart
 from recipes.serializers import (RecipeAddChangeSerializer,
                                  RecipeSerializer,
+                                 RecipeShoppingSerializer,
                                  RecipeSimpleSerializer)
 from recipes.utils import download_shopping_cart
 
@@ -84,31 +85,21 @@ class RecipeViewSet(viewsets.ModelViewSet):
             Ответ с данными о рецепте или информацией об успешном удалении.
         """
         user = request.user
+        recipe = self.get_object()
 
         if request.method == 'POST':
-            try:
-                recipe = Recipe.objects.get(id=kwargs['pk'])
-            except ObjectDoesNotExist as inst:
-                raise serializers.ValidationError(inst)
-
-            if user.items.filter(recipe=recipe):
-                return Response({'errors':
-                                 f'Рецепт {recipe} уже в списке покупок.'},
-                                status=status.HTTP_400_BAD_REQUEST)
             UserShoppingCart.objects.create(user=user, recipe=recipe)
-            serializer = RecipeSimpleSerializer(recipe)
-
+            serializer = RecipeShoppingSerializer(recipe)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
 
         else:
-            recipe = get_object_or_404(Recipe, id=kwargs['pk'])
-            try:
-                UserShoppingCart.objects.get(user=user, recipe=recipe).delete()
-            except ObjectDoesNotExist as inst:
-                raise serializers.ValidationError(inst)
-
-            return Response({'detail': 'OK'},
-                            status=status.HTTP_204_NO_CONTENT)
+            shopping_cart_item = get_object_or_404(
+                UserShoppingCart, user=user, recipe=recipe
+            )
+            shopping_cart_item.delete()
+            return Response(
+                {'detail': 'OK'}, status=status.HTTP_204_NO_CONTENT
+            )
 
     @action(('get',), detail=False, permission_classes=(IsAuthenticated,))
     def download_shopping_cart(self, request):

@@ -195,3 +195,30 @@ class RecipeAddChangeSerializer(serializers.ModelSerializer):
             )
 
         return obj
+
+
+class RecipeShoppingSerializer(serializers.ModelSerializer):
+    """Сериализатор для добавления и удаления рецепта в Список покупок."""
+
+    class Meta:
+        model = Recipe
+        fields = '__all__'
+
+    def validate(self, data):
+        user = self.context['request'].user
+        recipe = self.instance
+
+        if not recipe:
+            raise serializers.ValidationError({'recipe': 'Рецепт не найден.'})
+
+        if not user.is_authenticated:
+            raise serializers.ValidationError(
+                {'user': 'Пользователь не аутентифицирован.'}
+            )
+
+        if user.items.filter(recipe=recipe).exists():
+            raise serializers.ValidationError(
+                {'recipe': f'Рецепт {recipe} уже в списке покупок.'}
+            )
+
+        return data
