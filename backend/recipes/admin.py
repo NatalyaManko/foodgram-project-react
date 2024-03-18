@@ -1,4 +1,4 @@
-from django.contrib import admin, messages
+from django.contrib import admin
 
 from recipes.models import (Recipe,
                             RecipeIngredient,
@@ -9,12 +9,12 @@ from recipes.models import (Recipe,
 
 class RecipeIngredientInline(admin.TabularInline):
     model = RecipeIngredient
-    extra = 1
+    extra = 0
 
 
 class RecipeTagInline(admin.TabularInline):
     model = RecipeTag
-    extra = 1
+    extra = 0
 
 
 @admin.register(Recipe)
@@ -27,15 +27,6 @@ class RecipeAdmin(admin.ModelAdmin):
     @admin.display(description='Любимые рецепты')
     def favorites_count(self, obj):
         return obj.users_like_recipe.count()
-
-    def save_model(self, request, obj, form, change):
-        if not obj.name:
-            messages.error(
-                request,
-                'Ошибка сохранения: Необходимо заполнить поле "name".'
-            )
-            return
-        super().save_model(request, obj, form, change)
 
 
 @admin.register(RecipeIngredient)

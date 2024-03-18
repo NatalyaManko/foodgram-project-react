@@ -1,6 +1,6 @@
 from django.contrib.auth import get_user_model
 from django.shortcuts import get_object_or_404
-from rest_framework import serializers, status, viewsets
+from rest_framework import status, viewsets
 from rest_framework.decorators import action
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
@@ -40,7 +40,7 @@ class UserViewSet(viewsets.ModelViewSet):
         return Response(UserSerializer(request.user).data,
                         status=status.HTTP_200_OK)
 
-    @action(("post",), detail=False, permission_classes=(IsAuthenticated,))
+    @action(('post',), detail=False, permission_classes=(IsAuthenticated,))
     def set_password(self, request, *args, **kwargs):
         """
         Установка нового пароля для текущего пользователя.
@@ -54,7 +54,7 @@ class UserViewSet(viewsets.ModelViewSet):
 
         return Response(status=status.HTTP_204_NO_CONTENT)
 
-    @action(("post", 'delete'), detail=True,
+    @action(('post', 'delete'), detail=True,
             permission_classes=(IsAuthenticated,))
     def subscribe(self, request, *args, **kwargs):
         """
@@ -64,27 +64,15 @@ class UserViewSet(viewsets.ModelViewSet):
         user = request.user
 
         if request.method == 'POST':
-            if user == author:
-                return Response({'errors':
-                                 'Попытка подписаться на самого себя.'},
-                                status=status.HTTP_400_BAD_REQUEST)
-            if Subscription.objects.filter(user=user, author=author):
-                return Response({'errors':
-                                 f'Вы уже подписаны на {author.username}.'},
-                                status=status.HTTP_400_BAD_REQUEST)
-
             subscription = Subscription(user=user, author=author)
-            serializer = SubscriptionSerializer(subscription,
-                                                context={'request': request})
+            serializer = SubscriptionSerializer(
+                subscription, context={'request': request}
+            )
             subscription.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
-
         else:
-            try:
-                get_object_or_404(Subscription,
-                                  user=user, author=author).delete()
-            except Exception as inst:
-                raise serializers.ValidationError(inst)
-
-            return Response({'detail': 'OK'},
-                            status=status.HTTP_204_NO_CONTENT)
+            subscription = Subscription.objects.get(user=user, author=author)
+            subscription.delete()
+            return Response(
+                {'detail': 'OK'}, status=status.HTTP_204_NO_CONTENT
+            )
