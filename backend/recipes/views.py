@@ -49,20 +49,21 @@ class RecipeViewSet(viewsets.ModelViewSet):
         user = request.user
         recipe = self.get_object()
         serializer = RecipeFavoriteSerializer(
-            recipe, context={'request': request, 'user': user}
+            data={'user': user.pk, 'recipe': recipe.pk},
+            context={'request': request, 'user': user}
         )
 
-        if serializer.is_valid():
-            if request.method == 'POST':
-                serializer.save()
-                return Response(serializer.data,
-                                status=status.HTTP_201_CREATED)
-            else:
-                serializer.delete()
-                return Response({'detail': 'OK'},
-                                status=status.HTTP_204_NO_CONTENT)
-
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        serializer.is_valid(raise_exception=True)
+        if request.method == 'POST':
+            serializer.save()
+            return Response(
+                serializer.data, status=status.HTTP_201_CREATED
+            )
+        else:
+            serializer.delete()
+            return Response(
+                {'detail': 'OK'}, status=status.HTTP_204_NO_CONTENT
+            )
 
     @action(('post', 'delete'), detail=True,
             permission_classes=(IsAuthenticated,))

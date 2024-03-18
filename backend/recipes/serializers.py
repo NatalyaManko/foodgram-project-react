@@ -255,3 +255,9 @@ class RecipeFavoriteSerializer(serializers.ModelSerializer):
 
     def delete(self, instance):
         instance.delete()
+
+    def to_internal_value(self, data):
+        try:
+            return super().to_internal_value(data)
+        except serializers.ValidationError as exc:
+            raise serializers.ValidationError({'detail': exc.detail})
