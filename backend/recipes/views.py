@@ -39,18 +39,6 @@ class RecipeViewSet(viewsets.ModelViewSet):
 
         return RecipeSerializer
 
-    def perform_destroy(self, instance):
-        """
-        Выполнить удаление рецепта.
-        """
-        recipe = get_object_or_404(Recipe, id=self.kwargs.get('pk'))
-        recipe.delete()
-
-        return Response(
-            'Успешное удаление!',
-            status=status.HTTP_204_NO_CONTENT
-        )
-
     @action(('post', 'delete'), detail=True,
             permission_classes=(IsAuthenticated,))
     def favorite(self, request, **kwargs):
