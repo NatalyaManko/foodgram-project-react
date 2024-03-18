@@ -1,6 +1,6 @@
 from django.contrib.auth.admin import UserAdmin
 
-UserAdmin.list_filter = ('username', 'email',)
+UserAdmin.search_fields += ('username', 'email',)
 UserAdmin.list_display = ('id',
                           'username',
                           'email',
