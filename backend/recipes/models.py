@@ -24,9 +24,11 @@ class Recipe(models.Model):
                                related_name='recipes', verbose_name='Автор')
     ingredients = models.ManyToManyField(Ingredient,
                                          through='RecipeIngredient',
-                                         blank=False)
+                                         blank=False,
+                                         null=False)
     tags = models.ManyToManyField(Tag, through='RecipeTag',
-                                  blank=False)
+                                  blank=False,
+                                  null=False)
 
     class Meta:
         ordering = ('-id',)

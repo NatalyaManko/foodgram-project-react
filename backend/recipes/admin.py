@@ -1,5 +1,4 @@
 from django.contrib import admin, messages
-from django.core.exceptions import ValidationError
 
 from recipes.models import (Recipe,
                             RecipeIngredient,
@@ -30,11 +29,10 @@ class RecipeAdmin(admin.ModelAdmin):
         return obj.users_like_recipe.count()
 
     def save_model(self, request, obj, form, change):
-        try:
-            obj.full_clean()
-        except ValidationError as e:
+        if not obj.name:
             messages.error(
-                request, "Ошибка сохранения: {}".format(e.message)
+                request,
+                'Ошибка сохранения: Необходимо заполнить поле "name".'
             )
             return
         super().save_model(request, obj, form, change)
