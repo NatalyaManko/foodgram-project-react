@@ -3,7 +3,6 @@ import base64
 from django.conf import settings
 from django.core.files.base import ContentFile
 from rest_framework import serializers
-from rest_framework.exceptions import NotFound
 
 from recipes.models import Ingredient, Recipe, RecipeIngredient, UserFavorite
 from tags.models import Tag
@@ -212,11 +211,6 @@ class RecipeShoppingSerializer(serializers.ModelSerializer):
         if not recipe:
             raise serializers.ValidationError({'recipe': 'Рецепт не найден.'})
 
-        if not user.is_authenticated:
-            raise serializers.ValidationError(
-                {'user': 'Пользователь не аутентифицирован.'}
-            )
-
         if user.items.filter(recipe=recipe).exists():
             raise serializers.ValidationError(
                 {'recipe': f'Рецепт {recipe} уже в списке покупок.'}
@@ -238,8 +232,11 @@ class RecipeFavoriteSerializer(serializers.ModelSerializer):
         fields = ('user', 'recipe')
 
     def validate(self, data):
-        user = data['user']
-        recipe = data['recipe']
+        user = self.context['request'].user
+        recipe = self.instance
+
+        if not recipe:
+            raise serializers.ValidationError({'recipe': 'Рецепт не найден.'})
 
         if self.context['request'].method == 'POST':
             if UserFavorite.objects.filter(user=user, recipe=recipe).exists():
@@ -248,22 +245,3 @@ class RecipeFavoriteSerializer(serializers.ModelSerializer):
                 )
 
         return data
-
-    def create(self, validated_data):
-        user = validated_data['user']
-        recipe = validated_data['recipe']
-        user_favorite = UserFavorite.objects.create(user=user, recipe=recipe)
-        return user_favorite
-
-    def delete(self, instance):
-        instance.delete()
-
-    def favorite_exists(self, user, recipe):
-        return UserFavorite.objects.filter(user=user, recipe=recipe).exists()
-
-    def remove_from_favorites(self, user, recipe):
-        try:
-            favorite_item = UserFavorite.objects.get(user=user, recipe=recipe)
-            favorite_item.delete()
-        except UserFavorite.DoesNotExist:
-            raise NotFound({'detail': 'Рецепт не был добавлен в избранное.'})

@@ -49,23 +49,16 @@ class RecipeViewSet(viewsets.ModelViewSet):
         user = request.user
         recipe = self.get_object()
 
-        try:
-            favorite_item = UserFavorite.objects.get(user=user, recipe=recipe)
-        except UserFavorite.DoesNotExist:
-            favorite_item = None
-
-        serializer = RecipeFavoriteSerializer(
-            instance=favorite_item,
-            data={'user': user.pk, 'recipe': recipe.pk},
-            context={'request': request, 'user': user}
-        )
-
-        serializer.is_valid(raise_exception=True)
         if request.method == 'POST':
-            serializer.save()
+            UserFavorite.objects.create(user=user, recipe=recipe)
+            serializer = RecipeFavoriteSerializer(recipe)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
+
         else:
-            serializer.delete()
+            favorite_item = get_object_or_404(
+                UserFavorite, user=user, recipe=recipe
+            )
+            favorite_item.delete()
             return Response(
                 {'detail': 'OK'}, status=status.HTTP_204_NO_CONTENT
             )
