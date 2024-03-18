@@ -226,6 +226,7 @@ class RecipeFavoriteSerializer(serializers.ModelSerializer):
     """
 
     user = serializers.HiddenField(default=serializers.CurrentUserDefault())
+    recipe = serializers.PrimaryKeyRelatedField(queryset=Recipe.objects.all())
 
     class Meta:
         model = UserFavorite
