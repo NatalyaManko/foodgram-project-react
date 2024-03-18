@@ -1,6 +1,5 @@
 from django.contrib import admin, messages
 from django.core.exceptions import ValidationError
-from django.forms import BaseInlineFormSet
 
 from recipes.models import (Recipe,
                             RecipeIngredient,
@@ -9,59 +8,14 @@ from recipes.models import (Recipe,
                             UserShoppingCart)
 
 
-class RecipeIngredientFormSet(BaseInlineFormSet):
-    def clean(self):
-        super().clean()
-
-        ingredient_ids = set()
-        for form in self.forms:
-            if form.cleaned_data:
-                ingredient_id = form.cleaned_data['ingredient'].id
-                if ingredient_id in ingredient_ids:
-                    raise ValidationError(
-                        'Ингредиенты должны быть уникальными.'
-                    )
-                ingredient_ids.add(ingredient_id)
-
-        for form in self.forms:
-            if form.cleaned_data:
-                if (not form.cleaned_data['ingredient']
-                        or not form.cleaned_data['amount']):
-                    raise ValidationError(
-                        'Пожалуйста, заполните все обязательные поля.'
-                    )
-
-
 class RecipeIngredientInline(admin.TabularInline):
     model = RecipeIngredient
     extra = 1
-    formset = RecipeIngredientFormSet
-
-
-class RecipeTagFormSet(BaseInlineFormSet):
-    def clean(self):
-        super().clean()
-
-        for form in self.forms:
-            if form.cleaned_data:
-                if not form.cleaned_data['tag']:
-                    raise ValidationError(
-                        'Пожалуйста, выберите тег для всех рецептов.'
-                    )
-
-        tag_ids = set()
-        for form in self.forms:
-            if form.cleaned_data:
-                tag_id = form.cleaned_data['tag'].id
-                if tag_id in tag_ids:
-                    raise ValidationError('Теги должны быть уникальными.')
-                tag_ids.add(tag_id)
 
 
 class RecipeTagInline(admin.TabularInline):
     model = RecipeTag
     extra = 1
-    formset = RecipeTagFormSet
 
 
 @admin.register(Recipe)
