@@ -15,7 +15,6 @@ class RecipeTagInline(admin.TabularInline):
 
 class RecipeIngredientInline(admin.TabularInline):
     model = RecipeIngredient
-    fields = ('ingredient', 'amount', 'ingredient__measurement_unit')
     extra = 0
     min_num = 1
 
