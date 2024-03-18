@@ -23,10 +23,8 @@ class Recipe(models.Model):
     author = models.ForeignKey(User, on_delete=models.CASCADE,
                                related_name='recipes', verbose_name='Автор')
     ingredients = models.ManyToManyField(Ingredient,
-                                         through='RecipeIngredient',
-                                         blank=False)
-    tags = models.ManyToManyField(Tag, through='RecipeTag',
-                                  blank=False)
+                                         through='RecipeIngredient')
+    tags = models.ManyToManyField(Tag, through='RecipeTag')
 
     class Meta:
         ordering = ('-id',)
