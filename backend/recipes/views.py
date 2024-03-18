@@ -8,7 +8,7 @@ from rest_framework.permissions import (IsAuthenticated,
 from rest_framework.response import Response
 
 from recipes.filters import RecipeFilter
-from recipes.models import Recipe, UserShoppingCart
+from recipes.models import Recipe, UserFavorite, UserShoppingCart
 from recipes.serializers import (RecipeAddChangeSerializer,
                                  RecipeFavoriteSerializer,
                                  RecipeSerializer,
@@ -48,17 +48,22 @@ class RecipeViewSet(viewsets.ModelViewSet):
         """
         user = request.user
         recipe = self.get_object()
+
+        try:
+            favorite_item = UserFavorite.objects.get(user=user, recipe=recipe)
+        except UserFavorite.DoesNotExist:
+            favorite_item = None
+
         serializer = RecipeFavoriteSerializer(
-            data={'user': user.pk, 'recipe': recipe.pk},
+            instance=favorite_item,
+            data=request.data,
             context={'request': request, 'user': user}
         )
 
         serializer.is_valid(raise_exception=True)
         if request.method == 'POST':
             serializer.save()
-            return Response(
-                serializer.data, status=status.HTTP_201_CREATED
-            )
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
         else:
             serializer.delete()
             return Response(
