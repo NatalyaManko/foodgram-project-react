@@ -4,7 +4,7 @@ from django.conf import settings
 from django.core.files.base import ContentFile
 from rest_framework import serializers
 
-from recipes.models import Ingredient, Recipe, RecipeIngredient
+from recipes.models import Ingredient, Recipe, RecipeIngredient, UserFavorite
 from tags.models import Tag
 from tags.serializers import TagSerializer
 from users.serializers import UserSerializer
@@ -222,3 +222,36 @@ class RecipeShoppingSerializer(serializers.ModelSerializer):
             )
 
         return data
+
+
+class RecipeFavoriteSerializer(serializers.ModelSerializer):
+    """
+    Сериализатор для добавления и удаления рецептов
+    из Избранного пользователя.
+    """
+
+    user = serializers.HiddenField(default=serializers.CurrentUserDefault())
+
+    class Meta:
+        model = UserFavorite
+        fields = ('user', 'recipe')
+
+    def validate(self, data):
+        user = data['user']
+        recipe = data['recipe']
+
+        if UserFavorite.objects.filter(user=user, recipe=recipe).exists():
+            raise serializers.ValidationError(
+                {'detail': 'Рецепт уже в избранном пользователя.'}
+            )
+
+        return data
+
+    def create(self, validated_data):
+        user = validated_data['user']
+        recipe = validated_data['recipe']
+        user_favorite = UserFavorite.objects.create(user=user, recipe=recipe)
+        return user_favorite
+
+    def delete(self, instance):
+        instance.delete()

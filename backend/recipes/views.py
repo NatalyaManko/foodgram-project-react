@@ -1,19 +1,18 @@
 from backend.permissions import IsAuthorPermission
-from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import filters, serializers, status, viewsets
+from rest_framework import filters, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.permissions import (IsAuthenticated,
                                         IsAuthenticatedOrReadOnly)
 from rest_framework.response import Response
 
 from recipes.filters import RecipeFilter
-from recipes.models import Recipe, UserFavorite, UserShoppingCart
+from recipes.models import Recipe, UserShoppingCart
 from recipes.serializers import (RecipeAddChangeSerializer,
+                                 RecipeFavoriteSerializer,
                                  RecipeSerializer,
-                                 RecipeShoppingSerializer,
-                                 RecipeSimpleSerializer)
+                                 RecipeShoppingSerializer)
 from recipes.utils import download_shopping_cart
 
 
@@ -48,33 +47,22 @@ class RecipeViewSet(viewsets.ModelViewSet):
             Ответ с данными о рецепте или информацией об успешном удалении.
         """
         user = request.user
+        recipe = self.get_object()
+        serializer = RecipeFavoriteSerializer(
+            recipe, context={'request': request, 'user': user}
+        )
 
-        if request.method == 'POST':
-            try:
-                recipe = Recipe.objects.get(id=kwargs['pk'])
-            except ObjectDoesNotExist as inst:
-                raise serializers.ValidationError(inst)
+        if serializer.is_valid():
+            if request.method == 'POST':
+                serializer.save()
+                return Response(serializer.data,
+                                status=status.HTTP_201_CREATED)
+            else:
+                serializer.delete()
+                return Response({'detail': 'OK'},
+                                status=status.HTTP_204_NO_CONTENT)
 
-            if user.favorites.filter(recipe=recipe):
-                return Response({'errors':
-                                 f'Рецепт {recipe} уже в избранном.'},
-                                status=status.HTTP_400_BAD_REQUEST)
-            UserFavorite.objects.create(user=user, recipe=recipe)
-            serializer = RecipeSimpleSerializer(recipe)
-
-            return Response(serializer.data,
-                            status=status.HTTP_201_CREATED)
-
-        else:
-            recipe = get_object_or_404(Recipe, id=kwargs['pk'])
-
-            try:
-                UserFavorite.objects.get(user=user, recipe=recipe).delete()
-            except ObjectDoesNotExist as inst:
-                raise serializers.ValidationError(inst)
-
-            return Response({'detail': 'OK'},
-                            status=status.HTTP_204_NO_CONTENT)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     @action(('post', 'delete'), detail=True,
             permission_classes=(IsAuthenticated,))
