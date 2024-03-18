@@ -3,6 +3,7 @@ import base64
 from django.conf import settings
 from django.core.files.base import ContentFile
 from rest_framework import serializers
+from rest_framework.exceptions import NotFound
 
 from recipes.models import Ingredient, Recipe, RecipeIngredient, UserFavorite
 from tags.models import Tag
@@ -240,10 +241,11 @@ class RecipeFavoriteSerializer(serializers.ModelSerializer):
         user = data['user']
         recipe = data['recipe']
 
-        if UserFavorite.objects.filter(user=user, recipe=recipe).exists():
-            raise serializers.ValidationError(
-                {'detail': 'Рецепт уже в избранном пользователя.'}
-            )
+        if self.context['request'].method == 'POST':
+            if UserFavorite.objects.filter(user=user, recipe=recipe).exists():
+                raise serializers.ValidationError(
+                    {'detail': 'Рецепт уже в избранном пользователя.'}
+                )
 
         return data
 
@@ -255,3 +257,13 @@ class RecipeFavoriteSerializer(serializers.ModelSerializer):
 
     def delete(self, instance):
         instance.delete()
+
+    def favorite_exists(self, user, recipe):
+        return UserFavorite.objects.filter(user=user, recipe=recipe).exists()
+
+    def remove_from_favorites(self, user, recipe):
+        try:
+            favorite_item = UserFavorite.objects.get(user=user, recipe=recipe)
+            favorite_item.delete()
+        except UserFavorite.DoesNotExist:
+            raise NotFound({'detail': 'Рецепт не был добавлен в избранное.'})
