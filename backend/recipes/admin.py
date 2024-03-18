@@ -9,13 +9,13 @@ from recipes.models import (Recipe,
 
 class RecipeTagInline(admin.TabularInline):
     model = RecipeTag
-    extra = 1
+    extra = 0
     min_num = 1
 
 
 class RecipeIngredientInline(admin.TabularInline):
     model = RecipeIngredient
-    extra = 1
+    extra = 0
     min_num = 1
 
 
