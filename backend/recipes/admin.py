@@ -26,7 +26,7 @@ class RecipeAdmin(admin.ModelAdmin):
     search_fields = ('name', 'author', 'tags')
     readonly_fields = ('favorites_count',)
 
-    @admin.displayd(description='Любимые рецепты')
+    @admin.display(description='Любимые рецепты')
     def favorites_count(self, obj):
         return obj.users_like_recipe.count()
 
