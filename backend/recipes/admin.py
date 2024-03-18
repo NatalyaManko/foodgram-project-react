@@ -66,10 +66,8 @@ class RecipeTagInline(admin.TabularInline):
 
 @admin.register(Recipe)
 class RecipeAdmin(admin.ModelAdmin):
-    inlines = (RecipeIngredientInline,
-               RecipeTagInline,)
-    list_display = ('name',
-                    'author',)
+    inlines = (RecipeIngredientInline, RecipeTagInline,)
+    list_display = ('name', 'author',)
     search_fields = ('name', 'author', 'tags')
     readonly_fields = ('favorites_count',)
 
@@ -82,7 +80,7 @@ class RecipeAdmin(admin.ModelAdmin):
             obj.full_clean()
         except ValidationError as e:
             messages.error(
-                request, "Ошибка сохранения: {}".format(e.message_dict)
+                request, "Ошибка сохранения: {}".format(e.message)
             )
             return
         super().save_model(request, obj, form, change)
