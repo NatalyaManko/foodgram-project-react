@@ -226,15 +226,15 @@ class RecipeFavoriteSerializer(serializers.ModelSerializer):
     """
 
     user = serializers.HiddenField(default=serializers.CurrentUserDefault())
-    recipe = serializers.PrimaryKeyRelatedField(queryset=Recipe.objects.all())
 
     class Meta:
         model = UserFavorite
         fields = ('user', 'recipe')
 
     def validate(self, data):
-        user = self.context['request'].user
-        recipe = data.get('recipe')
+        request = self.context['request']
+        user = request.user
+        recipe = data['recipe'].id
 
         if not recipe:
             raise serializers.ValidationError({'recipe': 'Рецепт не найден.'})
@@ -246,3 +246,16 @@ class RecipeFavoriteSerializer(serializers.ModelSerializer):
                 )
 
         return data
+
+    def create(self, validated_data):
+        request = self.context['request']
+        user = request.user
+        recipe = validated_data['recipe']
+
+        user_favorite = UserFavorite(user=user, recipe=recipe)
+        user_favorite.save()
+
+        return user_favorite
+
+    def delete(self, instance):
+        instance.delete()

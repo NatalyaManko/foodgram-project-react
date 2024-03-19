@@ -48,39 +48,22 @@ class RecipeViewSet(viewsets.ModelViewSet):
             Ответ с данными о рецепте или информацией об успешном удалении.
         """
         user = request.user
-        recipe = self.get_object()
+        recipe = get_object_or_404(Recipe, id=kwargs['pk'])
 
         if request.method == 'POST':
-            favorite_items = UserFavorite.objects.filter(
-                user=user, recipe=recipe
+            favorite_item = UserFavorite(user=user, recipe=recipe)
+            serializer = RecipeFavoriteSerializer(
+                favorite_item, context={'request': request}
             )
-            if favorite_items.exists():
-                return Response(
-                    {'detail': 'Рецепт уже в избранном пользователя.'},
-                    status=status.HTTP_400_BAD_REQUEST
-                )
-            else:
-                UserFavorite.objects.create(user=user, recipe=recipe)
-                serializer = RecipeFavoriteSerializer(recipe)
-                return Response(
-                    serializer.data, status=status.HTTP_201_CREATED
-                )
+            favorite_item.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
 
         else:
-            favorite_item = UserFavorite.objects.filter(
-                user=user, recipe=recipe
-            ).first()
-            if favorite_item:
-                favorite_item.delete()
-                return Response(
-                    {'detail': 'Рецепт успешно удален из избранного.'},
-                    status=status.HTTP_204_NO_CONTENT
-                )
-            else:
-                return Response(
-                    {'detail': 'Рецепт не найден в избранном пользователя.'},
-                    status=status.HTTP_400_BAD_REQUEST
-                )
+            favorite_item = UserFavorite.objects.get(user=user, recipe=recipe)
+            favorite_item.delete()
+            return Response(
+                {'detail': 'OK'}, status=status.HTTP_204_NO_CONTENT
+            )
 
     @action(('post', 'delete'), detail=True,
             permission_classes=(IsAuthenticated,))

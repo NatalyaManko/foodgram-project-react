@@ -70,6 +70,7 @@ class UserViewSet(viewsets.ModelViewSet):
             )
             subscription.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
+
         else:
             subscription = Subscription.objects.get(user=user, author=author)
             subscription.delete()
