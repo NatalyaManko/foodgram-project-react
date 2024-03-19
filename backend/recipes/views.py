@@ -59,7 +59,9 @@ class RecipeViewSet(viewsets.ModelViewSet):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
 
         else:
-            favorite_item = UserFavorite.objects.get(user=user, recipe=recipe)
+            favorite_item = UserFavorite.objects.filter(
+                user=user, recipe=recipe
+            )
             favorite_item.delete()
             return Response(
                 {'detail': 'OK'}, status=status.HTTP_204_NO_CONTENT
