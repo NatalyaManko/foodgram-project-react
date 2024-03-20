@@ -28,7 +28,7 @@ ALLOWED_HOSTS = ['158.160.79.149', '127.0.0.1', 'localhost', 'gurman.myftp.biz']
 
 REST_FRAMEWORK = {
 
-    'DEFAULT_PAGINATION_CLASS': 'backend.paginations.LimitPagination',
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': DEFAULT_PAGE_SIZE,
 
     'DEFAULT_PERMISSION_CLASSES': [
