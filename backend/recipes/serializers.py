@@ -130,7 +130,11 @@ class RecipeAddChangeSerializer(serializers.ModelSerializer):
 
     def update(self, instance, validated_data):
         if 'image' in validated_data:
-            instance.image = validated_data['image']
+            new_image_data = validated_data.pop('image')
+
+        if instance.image:
+            instance.image.delete()
+        instance.image = new_image_data
 
         ingredients = validated_data.pop('ingredients_in_recipe')
         tags = validated_data.pop('tags')
@@ -140,18 +144,13 @@ class RecipeAddChangeSerializer(serializers.ModelSerializer):
         self.create_ingredients(instance, ingredients)
         instance.tags.set(tags)
 
+        if 'image' in validated_data:
+            instance.save()
+
         return super().update(instance, validated_data)
 
     def to_representation(self, value):
         return RecipeSerializer(value).data
-
-    def validate_image(self, value):
-        if not value:
-            raise serializers.ValidationError(
-                {'image': 'Добавьте картинку'}
-            )
-
-        return value
 
     def validate_ingredients(self, value):
         if len(value) < 1:
