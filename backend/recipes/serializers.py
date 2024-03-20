@@ -130,11 +130,10 @@ class RecipeAddChangeSerializer(serializers.ModelSerializer):
 
     def update(self, instance, validated_data):
 
-        new_image_data = validated_data.get('image', None)
-        if new_image_data is None:
-            validated_data['image'] = instance.image
-        else:
-            validated_data['image'] = new_image_data
+        new_image_data = validated_data.pop('image', None)
+        if new_image_data is not None:
+            instance.image = new_image_data
+
         ingredients = validated_data.pop('ingredients_in_recipe')
         tags = validated_data.pop('tags')
         instance.ingredients.clear()
