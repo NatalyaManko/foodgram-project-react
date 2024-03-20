@@ -129,12 +129,14 @@ class RecipeAddChangeSerializer(serializers.ModelSerializer):
         return recipe
 
     def update(self, instance, validated_data):
-        if 'image' in validated_data:
-            new_image_data = validated_data.pop('image')
 
-        if instance.image:
-            instance.image.delete()
-        instance.image = new_image_data
+        new_image_data = validated_data.get('image', None)
+        if new_image_data is None:
+            new_image_data = instance.image
+
+        if 'image' in validated_data:
+            if instance.image:
+                instance.image.delete()
 
         ingredients = validated_data.pop('ingredients_in_recipe')
         tags = validated_data.pop('tags')
@@ -144,8 +146,7 @@ class RecipeAddChangeSerializer(serializers.ModelSerializer):
         self.create_ingredients(instance, ingredients)
         instance.tags.set(tags)
 
-        if 'image' in validated_data:
-            instance.save()
+        instance.save()
 
         return super().update(instance, validated_data)
 
