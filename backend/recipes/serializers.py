@@ -176,12 +176,13 @@ class RecipeAddChangeSerializer(serializers.ModelSerializer):
         return value
 
     def validate(self, obj):
-        for field in ('name', 'text', 'cooking_time', 'image',
-                      'tags', 'ingredients_in_recipe'):
-            if not obj.get(field):
-                raise serializers.ValidationError(
-                    {f'{field}': f'Поле обязательно: {field}.'}
-                )
+        if self.context.get('request').method == 'POST':
+            for field in ('name', 'text', 'cooking_time', 'image',
+                          'tags', 'ingredients_in_recipe'):
+                if not obj.get(field):
+                    raise serializers.ValidationError(
+                        {f'{field}': f'Поле обязательно: {field}.'}
+                    )
         ingredients = obj.get('ingredients_in_recipe', [])
         ingredient_ids = set()
         for ingredient in ingredients:
