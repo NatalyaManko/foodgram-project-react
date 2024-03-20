@@ -40,7 +40,8 @@ class RecipeViewSet(viewsets.ModelViewSet):
         return RecipeSerializer
 
     @action(('post', 'delete'), detail=True,
-            permission_classes=(IsAuthenticated,))
+            permission_classes=(IsAuthenticated,),
+            pagination_class=None)
     def favorite(self, request, **kwargs):
         """
         Добавить рецепт в избранное или удалить из избранного.
@@ -68,7 +69,8 @@ class RecipeViewSet(viewsets.ModelViewSet):
             )
 
     @action(('post', 'delete'), detail=True,
-            permission_classes=(IsAuthenticated,))
+            permission_classes=(IsAuthenticated,),
+            pagination_class=None)
     def shopping_cart(self, request, **kwargs):
         """
         Добавить рецепт в список покупок или удалить из списка покупок.
