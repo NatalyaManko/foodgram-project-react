@@ -206,7 +206,7 @@ class RecipeAddChangeSerializer(serializers.ModelSerializer):
     def validate(self, attrs):
         name = attrs.get('name')
         author = self.context['request'].user
-        
+
         if Recipe.objects.filter(name=name, author=author).exists():
             raise serializers.ValidationError(
                 {'name':
@@ -214,11 +214,15 @@ class RecipeAddChangeSerializer(serializers.ModelSerializer):
             )
 
         ingredients = attrs.get('ingredients_in_recipe', [])
-        recipe_hash = hash((attrs.get('text'), frozenset(
-            (ingredient['ingredient']['id'],
-                 ingredient['amount']) for ingredient in ingredients)
-                        )
-                    )
+        recipe_hash = hash(
+            (
+                attrs.get('text'),
+                frozenset(
+                    (ingredient['ingredient']['id'], ingredient['amount'])
+                    for ingredient in ingredients
+                )
+            )
+        )
         if Recipe.objects.filter(hash=recipe_hash).exists():
             raise serializers.ValidationError(
                 {'ingredients_in_recipe': 'Такой рецепт уже существует'}
