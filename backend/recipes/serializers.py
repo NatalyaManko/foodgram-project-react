@@ -214,6 +214,7 @@ class RecipeAddChangeSerializer(serializers.ModelSerializer):
                 raise serializers.ValidationError(
                     {'name': 'Вы уже создали рецепт с таким названием.'}
                 )
+        return attrs
 
 
 class RecipeShoppingSerializer(serializers.ModelSerializer):
