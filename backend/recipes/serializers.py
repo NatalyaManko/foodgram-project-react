@@ -206,14 +206,17 @@ class RecipeAddChangeSerializer(serializers.ModelSerializer):
     def validate(self, attrs):
         instance = self.instance
 
-        if instance:
-            name = attrs.get('name', instance.name)
+        if 'name' in attrs:
+            name = attrs['name']
             author = self.context['request'].user
-            if Recipe.objects.filter(name=name, author=author
-                                     ).exclude(pk=instance.pk).exists():
-                raise serializers.ValidationError(
-                    {'name': 'Вы уже создали рецепт с таким названием.'}
-                )
+            existing_recipe = Recipe.objects.filter(
+                name=name, author=author
+            ).exclude(pk=instance.pk if instance else None)
+        if existing_recipe.exists():
+            raise serializers.ValidationError(
+                {'name': 'Вы уже создали рецепт с таким названием.'}
+            )
+
         return attrs
 
 
