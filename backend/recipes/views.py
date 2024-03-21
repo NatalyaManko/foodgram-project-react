@@ -3,7 +3,6 @@ from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters, status, viewsets
 from rest_framework.decorators import action
-from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.permissions import (IsAuthenticated,
                                         IsAuthenticatedOrReadOnly)
 from rest_framework.response import Response
@@ -26,7 +25,6 @@ class RecipeViewSet(viewsets.ModelViewSet):
     permission_classes = (IsAuthenticatedOrReadOnly,
                           IsAuthorPermission)
     filter_backends = (DjangoFilterBackend, filters.SearchFilter,)
-    pagination_class = LimitOffsetPagination
     search_fields = ('^name', )
     filterset_class = RecipeFilter
 
@@ -42,8 +40,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
         return RecipeSerializer
 
     @action(('post', 'delete'), detail=True,
-            permission_classes=(IsAuthenticated,),
-            pagination_class=None)
+            permission_classes=(IsAuthenticated,))
     def favorite(self, request, **kwargs):
         """
         Добавить рецепт в избранное или удалить из избранного.
@@ -71,8 +68,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
             )
 
     @action(('post', 'delete'), detail=True,
-            permission_classes=(IsAuthenticated,),
-            pagination_class=None)
+            permission_classes=(IsAuthenticated,))
     def shopping_cart(self, request, **kwargs):
         """
         Добавить рецепт в список покупок или удалить из списка покупок.
