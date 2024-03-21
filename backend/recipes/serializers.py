@@ -201,15 +201,19 @@ class RecipeAddChangeSerializer(serializers.ModelSerializer):
                 {'tags': 'Теги должны быть уникальными.'}
             )
 
-        author = self.context['request'].user
-        name = obj.get('name')
-        if Recipe.objects.filter(name=name, author=author).exists():
-            raise serializers.ValidationError(
-                {'name':
-                    'Рецепт с таким названием уже существует у этого автора.'}
-            )
-
         return obj
+
+    def validate(self, attrs):
+        instance = self.instance
+
+        if instance:
+            name = attrs.get('name', instance.name)
+            author = self.context['request'].user
+            if Recipe.objects.filter(name=name, author=author
+                                     ).exclude(pk=instance.pk).exists():
+                raise serializers.ValidationError(
+                    {'name': 'Вы уже создали рецепт с таким названием.'}
+                )
 
 
 class RecipeShoppingSerializer(serializers.ModelSerializer):
