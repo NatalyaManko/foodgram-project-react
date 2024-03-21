@@ -13,5 +13,15 @@ class IsAuthorPermission(permissions.BasePermission):
 
 class CanViewUserProfile(permissions.BasePermission):
     """Права на просмотр страниц пользователей"""
+
     def has_permission(self, request, view):
-        return True if view.action == 'retrieve' else False
+        if view.action == 'list':
+            return True
+
+        return request.user.is_authenticated
+
+    def has_object_permission(self, request, view, obj):
+        if view.action == 'retrieve':
+            return True
+
+        return False
