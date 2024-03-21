@@ -207,14 +207,16 @@ class RecipeAddChangeSerializer(serializers.ModelSerializer):
         instance = self.instance
 
         if 'name' in attrs:
-            name = attrs['name']
             author = self.context['request'].user
+            name = attrs['name']
+            text = attrs['text']
             existing_recipe = Recipe.objects.filter(
-                name=name, author=author
+                name=name, author=author, text=text
             ).exclude(pk=instance.pk if instance else None)
         if existing_recipe.exists():
             raise serializers.ValidationError(
-                {'name': 'Вы уже создали рецепт с таким названием.'}
+                {'name':
+                    'Вы уже создали рецепт с таким названием и описанием.'}
             )
 
         return attrs
