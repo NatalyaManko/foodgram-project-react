@@ -175,6 +175,17 @@ class RecipeAddChangeSerializer(serializers.ModelSerializer):
 
         return value
 
+    def validate_name(self, value):
+        if self.instance:
+            return value
+
+        author = self.context['request'].user
+        if Recipe.objects.filter(name=value, author=author).exists():
+            raise serializers.ValidationError(
+                'Рецепт с таким названием уже существует у этого автора.'
+            )
+        return value
+
     def validate(self, obj):
         if self.context.get('request').method == 'POST':
             for field in ('name', 'text', 'cooking_time', 'image',
@@ -202,33 +213,6 @@ class RecipeAddChangeSerializer(serializers.ModelSerializer):
             )
 
         return obj
-
-    def validate(self, attrs):
-        name = attrs.get('name')
-        author = self.context['request'].user
-
-        if Recipe.objects.filter(name=name, author=author).exists():
-            raise serializers.ValidationError(
-                {'name':
-                    'Рецепт с таким названием уже существует у этого автора.'}
-            )
-
-        ingredients = attrs.get('ingredients_in_recipe', [])
-        recipe_hash = hash(
-            (
-                attrs.get('text'),
-                frozenset(
-                    (ingredient['ingredient']['id'], ingredient['amount'])
-                    for ingredient in ingredients
-                )
-            )
-        )
-        if Recipe.objects.filter(hash=recipe_hash).exists():
-            raise serializers.ValidationError(
-                {'ingredients_in_recipe': 'Такой рецепт уже существует'}
-            )
-
-        return attrs
 
 
 class RecipeShoppingSerializer(serializers.ModelSerializer):
