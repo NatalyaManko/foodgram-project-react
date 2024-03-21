@@ -157,11 +157,14 @@ webcolors==1.11.1
 eMail: manko.nat@mail.ru, natalamanko955@gmail.com
 Телефон: +7 913 900 23 23
 ## Для ревью
-Суперпользователь:
-manko.nat@mail.ru
-superuser
-пароль ZuMaISbest
-Администратор:
-safari@yandex.ru
-admin
-ZUMA1234
+* Суперпользователь:
+
+- email: manko.nat@mail.ru
+- логин: superuser
+- пароль: ZuMaISbest
+
+* Администратор:
+
+- email: safari@yandex.ru
+- логин: admin
+- пароль: ZUMA1234
