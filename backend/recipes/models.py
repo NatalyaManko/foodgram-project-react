@@ -50,8 +50,8 @@ class RecipeIngredient(models.Model):
 
     class Meta:
         ordering = ('recipe__name', 'ingredient__name')
-        verbose_name = 'Ингридиента рецепта'
-        verbose_name_plural = 'Ингридиенты рецепта'
+        verbose_name = 'Ингредиента рецепта'
+        verbose_name_plural = 'Ингредиенты рецепта'
 
     def __str__(self):
         return f'{self.ingredient} в {self.recipe}'
