@@ -203,24 +203,6 @@ class RecipeAddChangeSerializer(serializers.ModelSerializer):
 
         return obj
 
-    def validate(self, attrs):
-        instance = self.instance
-
-        if 'name' in attrs:
-            author = self.context['request'].user
-            name = attrs['name']
-            text = attrs['text']
-            existing_recipe = Recipe.objects.filter(
-                name=name, author=author, text=text
-            ).exclude(pk=instance.pk if instance else None)
-        if existing_recipe.exists():
-            raise serializers.ValidationError(
-                {'name':
-                    'Вы уже создали рецепт с таким названием и описанием.'}
-            )
-
-        return attrs
-
 
 class RecipeShoppingSerializer(serializers.ModelSerializer):
     """Сериализатор для добавления и удаления рецепта в Список покупок."""
