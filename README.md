@@ -148,10 +148,9 @@ webcolors==1.11.1
 
 
 **_Контактная информация:_**
-###### Наталья Манько
+##### Наталья Манько
 https://github.com/natalyamanko 
 ```
 eMail: manko.nat@mail.ru, natalamanko955@gmail.com
-```
 Телефон: +7 913 900 23 23
 ```
